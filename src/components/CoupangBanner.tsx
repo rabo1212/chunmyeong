@@ -6,9 +6,10 @@ export default function CoupangBanner() {
       <iframe
         src="/coupang-ad.html"
         width="320"
-        height="100"
-        style={{ border: "none", overflow: "hidden" }}
+        height="120"
+        style={{ border: "none", overflow: "hidden", background: "transparent" }}
         scrolling="no"
+        sandbox="allow-scripts allow-popups allow-popups-to-escape-sandbox allow-same-origin"
       />
     </div>
   );
