@@ -41,9 +41,11 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
   const [unknownTime, setUnknownTime] = useState(false);
   const [gender, setGender] = useState<"male" | "female">("male");
   const [name, setName] = useState("");
+  const [calendarType, setCalendarType] = useState<"solar" | "lunar">("solar");
+  const [isLeapMonth, setIsLeapMonth] = useState(false);
 
   const days = Array.from(
-    { length: getDaysInMonth(year, month) },
+    { length: calendarType === "lunar" ? 30 : getDaysInMonth(year, month) },
     (_, i) => i + 1
   );
 
@@ -57,6 +59,8 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
       gender,
       unknownTime,
       name: name.trim() || undefined,
+      calendarType,
+      isLeapMonth: calendarType === "lunar" ? isLeapMonth : undefined,
     };
     onNext(info);
   };
@@ -70,7 +74,9 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
     >
       <div className="text-center mb-6">
         <h2 className="font-serif text-2xl text-cm-gold mb-1">사주 정보 입력</h2>
-        <p className="text-sm text-cm-beige/60">양력 기준으로 입력해주세요</p>
+        <p className="text-sm text-cm-beige/60">
+          {calendarType === "solar" ? "양력" : "음력"} 기준으로 입력해주세요
+        </p>
       </div>
 
       {/* 이름 (선택) */}
@@ -83,6 +89,44 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
           placeholder="결과에 표시할 이름"
           className="w-full bg-cm-navy/60 border border-cm-gold/20 rounded-lg px-3 py-2.5 text-cm-ivory placeholder:text-cm-beige/30 focus:outline-none focus:border-cm-gold/50"
         />
+      </div>
+
+      {/* 양력/음력 선택 */}
+      <div className="card p-4">
+        <label className="block text-sm text-cm-beige/70 mb-2">달력 종류</label>
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            onClick={() => { setCalendarType("solar"); setIsLeapMonth(false); }}
+            className={`py-2.5 rounded-lg text-center text-sm font-bold transition-all ${
+              calendarType === "solar"
+                ? "bg-cm-gold text-cm-navy"
+                : "bg-cm-navy/60 border border-cm-gold/20 text-cm-beige/60"
+            }`}
+          >
+            양력 (陽曆)
+          </button>
+          <button
+            onClick={() => setCalendarType("lunar")}
+            className={`py-2.5 rounded-lg text-center text-sm font-bold transition-all ${
+              calendarType === "lunar"
+                ? "bg-cm-gold text-cm-navy"
+                : "bg-cm-navy/60 border border-cm-gold/20 text-cm-beige/60"
+            }`}
+          >
+            음력 (陰曆)
+          </button>
+        </div>
+        {calendarType === "lunar" && (
+          <label className="flex items-center gap-2 mt-3 text-sm text-cm-beige/60 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={isLeapMonth}
+              onChange={(e) => setIsLeapMonth(e.target.checked)}
+              className="accent-cm-gold"
+            />
+            윤달 (閏月)
+          </label>
+        )}
       </div>
 
       {/* 생년월일 */}

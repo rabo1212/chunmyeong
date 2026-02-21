@@ -7,6 +7,8 @@ export interface BirthInfo {
   gender: "male" | "female";
   unknownTime: boolean;
   name?: string;
+  calendarType: "solar" | "lunar";
+  isLeapMonth?: boolean;  // 윤달 여부 (음력일 때만)
 }
 
 export interface PillarData {

@@ -6,6 +6,8 @@ import {
 } from "@orrery/core/constants";
 import { toHangul } from "@orrery/core/pillars";
 import type { BirthInput } from "@orrery/core/types";
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { Lunar } = require("lunar-javascript");
 import type { BirthInfo, SajuData, PillarData, OhengDistribution } from "./types";
 
 const ELEMENT_KR: Record<string, string> = {
@@ -30,10 +32,21 @@ function stemToKr(stem: string): string {
 }
 
 export function computeSaju(birthInfo: BirthInfo): SajuData {
+  // 음력→양력 변환
+  let { year, month, day } = birthInfo;
+  if (birthInfo.calendarType === "lunar") {
+    const lunarMonth = birthInfo.isLeapMonth ? -month : month;
+    const lunar = Lunar.fromYmdHms(year, lunarMonth, day, 0, 0, 0);
+    const solar = lunar.getSolar();
+    year = solar.getYear();
+    month = solar.getMonth();
+    day = solar.getDay();
+  }
+
   const input: BirthInput = {
-    year: birthInfo.year,
-    month: birthInfo.month,
-    day: birthInfo.day,
+    year,
+    month,
+    day,
     hour: birthInfo.unknownTime ? 12 : birthInfo.hour,
     minute: birthInfo.unknownTime ? 0 : birthInfo.minute,
     gender: birthInfo.gender === "male" ? "M" : "F",
