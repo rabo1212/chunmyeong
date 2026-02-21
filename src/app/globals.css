@@ -3,25 +3,101 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bg-primary: #1a1a2e;
+  --bg-secondary: #16213e;
+  --text-primary: #faf8f5;
+  --text-secondary: #e2d9c8;
+  --accent-gold: #c9a96e;
+  --accent-red: #d4483b;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  min-height: 100dvh;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* 별 배경 */
+.stars-bg {
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, rgba(201, 169, 110, 0.3), transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(201, 169, 110, 0.2), transparent),
+    radial-gradient(1px 1px at 90px 40px, rgba(201, 169, 110, 0.4), transparent),
+    radial-gradient(1px 1px at 130px 80px, rgba(201, 169, 110, 0.2), transparent),
+    radial-gradient(2px 2px at 160px 30px, rgba(201, 169, 110, 0.3), transparent),
+    radial-gradient(1px 1px at 200px 60px, rgba(201, 169, 110, 0.2), transparent),
+    radial-gradient(2px 2px at 250px 20px, rgba(201, 169, 110, 0.15), transparent),
+    radial-gradient(1px 1px at 300px 50px, rgba(201, 169, 110, 0.25), transparent);
+  background-size: 320px 100px;
 }
+
+/* 팔괘 회전 로딩 */
+.bagua-spin {
+  display: inline-block;
+  font-size: 3rem;
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 금색 글로우 텍스트 */
+.glow-gold {
+  text-shadow:
+    0 0 10px rgba(201, 169, 110, 0.3),
+    0 0 30px rgba(201, 169, 110, 0.2),
+    0 0 60px rgba(201, 169, 110, 0.1);
+}
+
+/* 카드 스타일 */
+.card {
+  @apply bg-cm-deep/80 backdrop-blur-sm border border-cm-gold/20 rounded-xl;
+}
+
+/* 버튼 스타일 */
+.btn-primary {
+  @apply bg-cm-gold text-cm-navy font-bold py-3 px-6 rounded-lg
+    hover:bg-cm-gold/90 active:scale-[0.98] transition-all duration-200;
+}
+
+.btn-secondary {
+  @apply border border-cm-gold/40 text-cm-gold py-3 px-6 rounded-lg
+    hover:bg-cm-gold/10 active:scale-[0.98] transition-all duration-200;
+}
+
+/* 스크롤바 숨기기 (모바일) */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 얼굴 가이드 오버레이 */
+.face-guide {
+  border: 2px dashed rgba(201, 169, 110, 0.5);
+  border-radius: 50%;
+  width: 220px;
+  height: 300px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+/* 오행 색상 유틸리티 */
+.oheng-wood { color: #4a7c59; }
+.oheng-fire { color: #d4483b; }
+.oheng-earth { color: #c9a96e; }
+.oheng-metal { color: #e8e8e8; }
+.oheng-water { color: #2c5f7c; }
+
+.oheng-bg-wood { background-color: rgba(74, 124, 89, 0.2); }
+.oheng-bg-fire { background-color: rgba(212, 72, 59, 0.2); }
+.oheng-bg-earth { background-color: rgba(201, 169, 110, 0.2); }
+.oheng-bg-metal { background-color: rgba(232, 232, 232, 0.2); }
+.oheng-bg-water { background-color: rgba(44, 95, 124, 0.2); }
