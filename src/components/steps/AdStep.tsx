@@ -7,42 +7,31 @@ interface AdStepProps {
   onNext: () => void;
 }
 
-function AdBanner() {
-  const adRef = useRef<HTMLModElement>(null);
-  const pushed = useRef(false);
+function KakaoAdFit() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const loaded = useRef(false);
 
   useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID) return;
-    if (pushed.current) return;
-    try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      ((window as any).adsbygoogle = (window as any).adsbygoogle || []).push({});
-      pushed.current = true;
-    } catch {
-      // adsbygoogle not loaded yet
-    }
+    if (loaded.current) return;
+    if (!containerRef.current) return;
+
+    const ins = document.createElement("ins");
+    ins.className = "kakao_ad_area";
+    ins.style.display = "none";
+    ins.setAttribute("data-ad-unit", "DAN-ra6Bp0jJlyb0KOOd");
+    ins.setAttribute("data-ad-width", "320");
+    ins.setAttribute("data-ad-height", "100");
+    containerRef.current.appendChild(ins);
+
+    // AdFit SDK 로드 후 광고 렌더링
+    const script = document.createElement("script");
+    script.src = "//t1.daumcdn.net/kas/static/ba.min.js";
+    script.async = true;
+    containerRef.current.appendChild(script);
+    loaded.current = true;
   }, []);
 
-  if (!process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID) {
-    return (
-      <div className="w-full h-64 bg-cm-deep/50 border border-cm-gold/10 rounded-xl flex flex-col items-center justify-center gap-2">
-        <p className="text-cm-beige/30 text-sm">광고 준비 중</p>
-        <p className="text-cm-beige/20 text-xs">서비스 유지를 위한 광고입니다</p>
-      </div>
-    );
-  }
-
-  return (
-    <ins
-      ref={adRef}
-      className="adsbygoogle"
-      style={{ display: "block", width: "100%", height: "250px" }}
-      data-ad-client={process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID}
-      data-ad-slot={process.env.NEXT_PUBLIC_ADSENSE_AD_SLOT || ""}
-      data-ad-format="auto"
-      data-full-width-responsive="true"
-    />
-  );
+  return <div ref={containerRef} className="flex justify-center" />;
 }
 
 export default function AdStep({ onNext }: AdStepProps) {
@@ -75,9 +64,9 @@ export default function AdStep({ onNext }: AdStepProps) {
         </p>
       </div>
 
-      {/* 광고 영역 */}
+      {/* 카카오 AdFit 광고 */}
       <div className="w-full max-w-sm mb-6">
-        <AdBanner />
+        <KakaoAdFit />
       </div>
 
       <p className="text-xs text-cm-beige/30 mb-4">

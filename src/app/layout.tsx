@@ -37,6 +37,12 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <head>
+        {/* 카카오 AdFit */}
+        <Script
+          src="//t1.daumcdn.net/kas/static/ba.min.js"
+          strategy="afterInteractive"
+        />
+        {/* Google AdSense (선택) */}
         {process.env.NEXT_PUBLIC_ADSENSE_CLIENT_ID && (
           <Script
             async
