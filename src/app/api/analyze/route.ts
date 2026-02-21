@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { computeSaju } from "@/lib/saju";
+import { computeZiwei, computeLiunian, computeDaxianList } from "@/lib/ziwei";
 import { SAJU_SYSTEM_PROMPT, buildAnalysisPrompt } from "@/lib/prompts";
 import type { BirthInfo } from "@/lib/types";
 
@@ -38,6 +39,12 @@ export async function POST(request: NextRequest) {
 
     // 1. 사주 계산
     const saju = computeSaju(birthInfo);
+
+    // 1.5 자미두수 계산 (프리미엄용)
+    const ziweiResult = computeZiwei(birthInfo);
+    const currentYear = new Date().getFullYear();
+    const liunianData = computeLiunian(birthInfo, currentYear);
+    const daxianList = computeDaxianList(birthInfo);
 
     // 2. Claude API 호출
     const anthropic = new Anthropic({
@@ -81,7 +88,14 @@ export async function POST(request: NextRequest) {
     const interpretation =
       response.content[0].type === "text" ? response.content[0].text : "";
 
-    return NextResponse.json({ saju, interpretation });
+    return NextResponse.json({
+      saju,
+      interpretation,
+      // 프리미엄용 데이터
+      ziweiSummary: ziweiResult?.summary ?? null,
+      liunianData,
+      daxianList,
+    });
   } catch (error) {
     console.error("Analysis error:", error);
     return NextResponse.json(

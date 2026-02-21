@@ -7,12 +7,21 @@ import SinsalSection from "@/components/ui/SinsalSection";
 import ResultCard from "@/components/ResultCard";
 import ShareButtons from "@/components/ShareButtons";
 import CoupangBanner from "@/components/CoupangBanner";
-import type { AnalysisResult } from "@/lib/types";
+import PremiumUpsell from "@/components/premium/PremiumUpsell";
+import ZiweiPalaceCards from "@/components/premium/ZiweiPalaceCards";
+import MonthlyTimeline from "@/components/premium/MonthlyTimeline";
+import FaceDetailAnalysis from "@/components/premium/FaceDetailAnalysis";
+import DaeunDetailSection from "@/components/premium/DaeunDetailSection";
+import YongshinSection from "@/components/premium/YongshinSection";
+import PdfDownloadButton from "@/components/premium/PdfDownloadButton";
+import type { AnalysisResult, PremiumData } from "@/lib/types";
 
 interface ResultStepProps {
   result: AnalysisResult;
   name?: string;
   onRestart: () => void;
+  premiumData?: PremiumData | null;
+  onPaymentReady?: () => Promise<{ orderId: string; amount: number } | null>;
 }
 
 function parseMarkdown(text: string): string {
@@ -24,22 +33,37 @@ function parseMarkdown(text: string): string {
     .replace(/\n/g, '<br/>');
 }
 
-export default function ResultStep({ result, name, onRestart }: ResultStepProps) {
+export default function ResultStep({
+  result,
+  name,
+  onRestart,
+  premiumData,
+  onPaymentReady,
+}: ResultStepProps) {
   const { saju, interpretation } = result;
+  const isPremium = !!premiumData;
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
+      id={isPremium ? "premium-result-container" : undefined}
       className="px-4 py-6 space-y-6 no-scrollbar"
     >
       {/* 타이틀 */}
       <div className="text-center">
+        {isPremium && (
+          <span className="inline-block px-3 py-1 bg-cm-gold/20 border border-cm-gold/40 rounded-full text-xs text-cm-gold mb-2">
+            PREMIUM
+          </span>
+        )}
         <h2 className="font-serif text-2xl text-cm-gold glow-gold">
           {name ? `${name}님의 천명` : "당신의 천명"}
         </h2>
         <p className="text-sm text-cm-beige/50 mt-1">
-          사주팔자 × AI 관상 통합 분석
+          {isPremium
+            ? "사주팔자 × 자미두수 × AI 관상 통합 분석"
+            : "사주팔자 × AI 관상 통합 분석"}
         </p>
       </div>
 
@@ -113,6 +137,57 @@ export default function ResultStep({ result, name, onRestart }: ResultStepProps)
         />
       </motion.div>
 
+      {/* === 프리미엄 섹션 === */}
+      {isPremium && premiumData ? (
+        <>
+          <div className="border-t border-cm-gold/20 pt-6">
+            <h3 className="font-serif text-center text-cm-gold text-lg mb-6 glow-gold">
+              프리미엄 심층 분석
+            </h3>
+          </div>
+
+          {premiumData.ziwei12 && (
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.9 }}>
+              <ZiweiPalaceCards palaces={premiumData.ziwei12} />
+            </motion.div>
+          )}
+
+          {premiumData.monthlyFortune && (
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.0 }}>
+              <MonthlyTimeline fortunes={premiumData.monthlyFortune} />
+            </motion.div>
+          )}
+
+          {premiumData.faceAreas && (
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.1 }}>
+              <FaceDetailAnalysis areas={premiumData.faceAreas} />
+            </motion.div>
+          )}
+
+          {premiumData.daeunDetail && (
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.2 }}>
+              <DaeunDetailSection detail={premiumData.daeunDetail} />
+            </motion.div>
+          )}
+
+          {premiumData.yongshin && (
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.3 }}>
+              <YongshinSection yongshin={premiumData.yongshin} />
+            </motion.div>
+          )}
+
+          {/* PDF 다운로드 */}
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.4 }}>
+            <PdfDownloadButton />
+          </motion.div>
+        </>
+      ) : (
+        /* 프리미엄 업셀 (무료 사용자) */
+        onPaymentReady && (
+          <PremiumUpsell onPaymentReady={onPaymentReady} />
+        )
+      )}
+
       {/* 공유용 카드 (숨김) */}
       <div className="overflow-hidden" style={{ height: 0 }}>
         <ResultCard saju={saju} name={name} />
@@ -122,16 +197,23 @@ export default function ResultStep({ result, name, onRestart }: ResultStepProps)
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 1.0 }}
+        transition={{ delay: isPremium ? 1.5 : 1.0 }}
       >
         <h3 className="text-sm text-cm-beige/60 text-center mb-3">결과 공유하기</h3>
         <ShareButtons />
       </motion.div>
 
-      {/* 쿠팡 파트너스 */}
-      <div className="flex justify-center">
-        <CoupangBanner />
-      </div>
+      {/* 쿠팡 파트너스 (프리미엄이면 숨김) */}
+      {!isPremium && (
+        <div className="flex justify-center">
+          <CoupangBanner />
+        </div>
+      )}
+
+      {/* 면책 */}
+      <p className="text-[10px] text-cm-beige/30 text-center leading-relaxed">
+        본 서비스는 엔터테인먼트 목적이며, 관상학·사주학적 해석은 과학적 근거에 기반하지 않습니다.
+      </p>
 
       {/* 다시 하기 */}
       <div className="text-center pt-4 pb-8">

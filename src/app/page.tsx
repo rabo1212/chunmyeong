@@ -9,7 +9,7 @@ import SelfieStep from "@/components/steps/SelfieStep";
 import AnalyzingStep from "@/components/steps/AnalyzingStep";
 import AdStep from "@/components/steps/AdStep";
 import ResultStep from "@/components/steps/ResultStep";
-import type { BirthInfo, AnalysisResult } from "@/lib/types";
+import type { BirthInfo, AnalysisResult, PremiumData } from "@/lib/types";
 
 type Step = "start" | "birth" | "selfie" | "analyzing" | "ad" | "result";
 
@@ -26,7 +26,9 @@ export default function Home() {
   const [step, setStep] = useState<Step>("start");
   const [birthInfo, setBirthInfo] = useState<BirthInfo | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
+  const [premiumData, setPremiumData] = useState<PremiumData | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [hasFacePhoto, setHasFacePhoto] = useState(false);
 
   const handleBirthInfoNext = useCallback((info: BirthInfo) => {
     setBirthInfo(info);
@@ -38,6 +40,7 @@ export default function Home() {
       if (!birthInfo) return;
       setStep("analyzing");
       setError(null);
+      setHasFacePhoto(!!selfieBase64);
 
       try {
         const res = await fetch("/api/analyze", {
@@ -62,10 +65,44 @@ export default function Home() {
     [birthInfo]
   );
 
+  // 프리미엄 결제 준비
+  const handlePaymentReady = useCallback(async (): Promise<{ orderId: string; amount: number } | null> => {
+    if (!result) return null;
+
+    try {
+      const res = await fetch("/api/payment/ready", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          saju: result.saju,
+          interpretation: result.interpretation,
+          ziweiSummary: result.ziweiSummary,
+          liunianData: result.liunianData,
+          daxianList: result.daxianList,
+          hasFacePhoto,
+        }),
+      });
+
+      if (!res.ok) {
+        throw new Error("결제 준비에 실패했습니다.");
+      }
+
+      const data = await res.json();
+      // orderId를 localStorage에 저장 (결제 위젯에서 사용)
+      localStorage.setItem("pendingOrderId", data.orderId);
+      return data;
+    } catch (err) {
+      console.error("Payment ready error:", err);
+      return null;
+    }
+  }, [result, hasFacePhoto]);
+
   const handleRestart = useCallback(() => {
     setBirthInfo(null);
     setResult(null);
+    setPremiumData(null);
     setError(null);
+    setHasFacePhoto(false);
     setStep("start");
   }, []);
 
@@ -116,6 +153,8 @@ export default function Home() {
             result={result}
             name={birthInfo?.name}
             onRestart={handleRestart}
+            premiumData={premiumData}
+            onPaymentReady={handlePaymentReady}
           />
         )}
       </AnimatePresence>
