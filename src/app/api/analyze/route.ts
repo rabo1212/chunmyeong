@@ -89,7 +89,11 @@ export async function POST(request: NextRequest) {
       response.content[0].type === "text" ? response.content[0].text : "";
 
     return NextResponse.json({
-      saju,
+      saju: {
+        ...saju,
+        // [FIX] CRITICAL 8: birthInfo 포함 (프리미엄 birthYear 계산용)
+        birthInfo: { year: birthInfo.year, month: birthInfo.month, day: birthInfo.day },
+      },
       interpretation,
       // 프리미엄용 데이터
       ziweiSummary: ziweiResult?.summary ?? null,

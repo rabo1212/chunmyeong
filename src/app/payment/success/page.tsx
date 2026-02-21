@@ -1,18 +1,21 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import type { PremiumData } from "@/lib/types";
 
 function SuccessContent() {
   const searchParams = useSearchParams();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [error, setError] = useState("");
   const [resultId, setResultId] = useState("");
-  const [, setPremiumData] = useState<PremiumData | null>(null);
+  // [FIX] CRITICAL 6: useRef로 이중 호출 방지
+  const hasConfirmed = useRef(false);
 
   useEffect(() => {
+    if (hasConfirmed.current) return;
+    hasConfirmed.current = true;
+
     const paymentKey = searchParams.get("paymentKey");
     const orderId = searchParams.get("orderId");
     const amount = searchParams.get("amount");
@@ -42,12 +45,11 @@ function SuccessContent() {
 
         const data = await res.json();
         setResultId(data.resultId);
-        setPremiumData(data.premiumData);
         setStatus("success");
 
-        // localStorage에도 저장 (재접근용)
+        // [FIX] WARNING: resultId만 저장 (전체 premiumData 저장 안 함)
         if (data.resultId) {
-          localStorage.setItem(`premium:${data.resultId}`, JSON.stringify(data.premiumData));
+          localStorage.setItem("lastPremiumResultId", data.resultId);
         }
       } catch (err) {
         setStatus("error");
@@ -57,6 +59,13 @@ function SuccessContent() {
 
     confirmPayment();
   }, [searchParams]);
+
+  // [FIX] CRITICAL 5: 리다이렉트를 useEffect로 이동
+  useEffect(() => {
+    if (status === "success" && resultId) {
+      window.location.href = `/result/${resultId}`;
+    }
+  }, [status, resultId]);
 
   if (status === "loading") {
     return (
@@ -94,11 +103,6 @@ function SuccessContent() {
         </a>
       </div>
     );
-  }
-
-  // 성공 — 결과 페이지로 리다이렉트
-  if (resultId) {
-    window.location.href = `/result/${resultId}`;
   }
 
   return (

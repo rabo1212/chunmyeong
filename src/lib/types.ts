@@ -59,6 +59,7 @@ export interface SajuData {
   daeun: DaeunData[];
   specialSinsal: SpecialSinsalData[];  // 특수 신살
   summary: string;            // AI 전달용 사주 요약 텍스트
+  birthInfo?: { year: number; month: number; day: number }; // 프리미엄 birthYear 계산용
 }
 
 export interface AnalysisResult {

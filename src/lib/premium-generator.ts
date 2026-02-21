@@ -29,14 +29,26 @@ interface PremiumInput {
   selfieBase64?: string | null;
 }
 
-// JSON 파싱 헬퍼 — Claude가 가끔 ```json 블록으로 감쌀 수 있음
+// [FIX] WARNING: JSON 파싱 개선 — 더 범용적인 블록 추출
 function parseJSON<T>(text: string): T {
-  // ```json ... ``` 블록 제거
   let cleaned = text.trim();
-  if (cleaned.startsWith("```")) {
-    cleaned = cleaned.replace(/^```(?:json)?\s*\n?/, "").replace(/\n?```\s*$/, "");
+
+  // ```json ... ``` 블록 추출 (앞뒤 설명 텍스트 대응)
+  const codeBlockMatch = cleaned.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+  if (codeBlockMatch) {
+    cleaned = codeBlockMatch[1].trim();
   }
-  return JSON.parse(cleaned);
+
+  // 그래도 파싱 안 되면 { } 블록만 추출
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]);
+    }
+    throw new Error("JSON 파싱 실패");
+  }
 }
 
 // Claude API 호출 (1회 재시도)
@@ -71,8 +83,6 @@ async function callClaude(
       });
 
       const text = response.content[0].type === "text" ? response.content[0].text : "";
-      // JSON 파싱 검증
-      parseJSON(text);
       return text;
     } catch (error) {
       if (attempt === 0) {
@@ -86,16 +96,19 @@ async function callClaude(
 }
 
 export async function generatePremiumContent(input: PremiumInput): Promise<PremiumData> {
-  const anthropic = new Anthropic({
-    apiKey: process.env.ANTHROPIC_API_KEY!,
-  });
+  // [FIX] WARNING: API 키 명시적 검증
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) throw new Error("ANTHROPIC_API_KEY 환경변수가 설정되지 않았습니다.");
+
+  const anthropic = new Anthropic({ apiKey });
 
   const targetYear = new Date().getFullYear();
   const liunianSummary = buildLiunianSummary(input.liunianData);
-  const daeunSummary = buildDaeunSummary(input.saju.daeun, input.saju.daeun.length > 0
-    ? targetYear - input.saju.daeun[0].age
-    : targetYear - 30 // fallback
-  );
+
+  // [FIX] CRITICAL 8: birthYear 계산 수정 — saju.birthInfo에서 직접 가져옴
+  const birthYear = input.saju.birthInfo?.year
+    ?? (targetYear - 30); // fallback
+  const daeunSummary = buildDaeunSummary(input.saju.daeun, birthYear);
 
   // 프롬프트 3종 구성
   const prompt1 = buildZiweiYongshinPrompt(input.ziweiSummary, input.saju.summary);
@@ -107,23 +120,59 @@ export async function generatePremiumContent(input: PremiumInput): Promise<Premi
     input.hasFacePhoto
   );
 
-  // 3건 병렬 호출
-  const [result1, result2, result3] = await Promise.all([
+  // [FIX] CRITICAL 9: Promise.allSettled — 부분 실패 허용
+  const results = await Promise.allSettled([
     callClaude(anthropic, prompt1),
     callClaude(anthropic, prompt2),
     callClaude(anthropic, prompt3, input.hasFacePhoto ? input.selfieBase64 : null),
   ]);
 
-  // JSON 파싱
-  const data1 = parseJSON<{ ziwei12: ZiweiPalaceAnalysis[]; yongshin: YongshinInfo }>(result1);
-  const data2 = parseJSON<{ monthlyFortune: MonthlyFortune[] }>(result2);
-  const data3 = parseJSON<{ faceAreas: FaceAreaAnalysis[]; daeunDetail: DaeunDetail }>(result3);
-
-  return {
-    ziwei12: data1.ziwei12,
-    monthlyFortune: data2.monthlyFortune,
-    faceAreas: data3.faceAreas,
-    daeunDetail: data3.daeunDetail,
-    yongshin: data1.yongshin,
+  // 결과 파싱 (실패 시 기본값)
+  let ziwei12: ZiweiPalaceAnalysis[] = [];
+  let yongshin: YongshinInfo = { element: "미확인", elementEmoji: "", color: "-", direction: "-", number: "-", gemstone: "-", food: "-", career: "-", analysis: "분석 중 오류가 발생했습니다." };
+  let monthlyFortune: MonthlyFortune[] = [];
+  let faceAreas: FaceAreaAnalysis[] = [];
+  let daeunDetail: DaeunDetail = {
+    current: { ganzi: "-", ageRange: "-", title: "분석 실패", analysis: "프리미엄 분석 중 오류가 발생했습니다." },
+    previous: null,
+    next: null,
+    coreAdvice: "-",
   };
+
+  if (results[0].status === "fulfilled") {
+    try {
+      const data1 = parseJSON<{ ziwei12: ZiweiPalaceAnalysis[]; yongshin: YongshinInfo }>(results[0].value);
+      ziwei12 = data1.ziwei12 || [];
+      yongshin = data1.yongshin || yongshin;
+    } catch (e) {
+      console.error("Premium parse error (ziwei):", e);
+    }
+  } else {
+    console.error("Premium call 1 failed:", results[0].reason);
+  }
+
+  if (results[1].status === "fulfilled") {
+    try {
+      const data2 = parseJSON<{ monthlyFortune: MonthlyFortune[] }>(results[1].value);
+      monthlyFortune = data2.monthlyFortune || [];
+    } catch (e) {
+      console.error("Premium parse error (monthly):", e);
+    }
+  } else {
+    console.error("Premium call 2 failed:", results[1].reason);
+  }
+
+  if (results[2].status === "fulfilled") {
+    try {
+      const data3 = parseJSON<{ faceAreas: FaceAreaAnalysis[]; daeunDetail: DaeunDetail }>(results[2].value);
+      faceAreas = data3.faceAreas || [];
+      daeunDetail = data3.daeunDetail || daeunDetail;
+    } catch (e) {
+      console.error("Premium parse error (face/daeun):", e);
+    }
+  } else {
+    console.error("Premium call 3 failed:", results[2].reason);
+  }
+
+  return { ziwei12, monthlyFortune, faceAreas, daeunDetail, yongshin };
 }

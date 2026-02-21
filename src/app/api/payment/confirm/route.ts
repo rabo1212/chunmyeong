@@ -6,6 +6,8 @@ import type { SajuData, LiunianData, DaxianItem } from "@/lib/types";
 
 export const maxDuration = 60;
 
+const FIXED_AMOUNT = 1900;
+
 export async function POST(request: NextRequest) {
   try {
     const { paymentKey, orderId, amount } = await request.json();
@@ -14,9 +16,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "결제 정보가 부족합니다." }, { status: 400 });
     }
 
+    // [FIX] CRITICAL 1: 금액 위변조 방지 — 서버 측 고정 금액 검증
+    if (Number(amount) !== FIXED_AMOUNT) {
+      return NextResponse.json({ error: "금액이 올바르지 않습니다." }, { status: 400 });
+    }
+
+    // [FIX] CRITICAL 3: 이중 결제 방지 — 이미 처리된 주문이면 기존 결과 반환
+    const existingPayment = await kv.get<{ resultId: string }>(`payment:${orderId}`);
+    if (existingPayment) {
+      return NextResponse.json({ resultId: existingPayment.resultId });
+    }
+
+    // [FIX] CRITICAL 2: Race condition 방지 — 처리 중 잠금
+    const lockKey = `lock:${orderId}`;
+    const acquired = await kv.set(lockKey, "1", { ex: 120, nx: true });
+    if (!acquired) {
+      return NextResponse.json({ error: "이미 처리 중입니다." }, { status: 409 });
+    }
+
     // 1. 토스 결제 승인
     const secretKey = process.env.TOSS_SECRET_KEY;
     if (!secretKey) {
+      await kv.del(lockKey);
       return NextResponse.json({ error: "결제 설정 오류" }, { status: 500 });
     }
 
@@ -28,14 +49,16 @@ export async function POST(request: NextRequest) {
         Authorization: encryptedKey,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ paymentKey, orderId, amount }),
+      // [FIX] 서버 측 고정 금액으로 토스 API 호출
+      body: JSON.stringify({ paymentKey, orderId, amount: FIXED_AMOUNT }),
     });
 
     if (!tossRes.ok) {
       const tossError = await tossRes.json().catch(() => ({}));
       console.error("Toss confirm error:", tossError);
+      await kv.del(lockKey);
       return NextResponse.json(
-        { error: tossError.message || "결제 승인에 실패했습니다." },
+        { error: "결제 승인에 실패했습니다." },
         { status: 400 }
       );
     }
@@ -51,6 +74,7 @@ export async function POST(request: NextRequest) {
     }>(`pending:${orderId}`);
 
     if (!pendingData) {
+      await kv.del(lockKey);
       return NextResponse.json(
         { error: "분석 데이터가 만료되었습니다. 다시 분석해주세요." },
         { status: 410 }
@@ -87,7 +111,7 @@ export async function POST(request: NextRequest) {
       {
         orderId,
         paymentKey,
-        amount,
+        amount: FIXED_AMOUNT,
         resultId,
         status: "confirmed",
         createdAt: new Date().toISOString(),
@@ -95,8 +119,9 @@ export async function POST(request: NextRequest) {
       { ex: 7776000 } // 90일
     );
 
-    // 6. 임시 데이터 삭제
+    // 6. 임시 데이터 + 잠금 삭제
     await kv.del(`pending:${orderId}`);
+    await kv.del(lockKey);
 
     return NextResponse.json({ resultId, premiumData });
   } catch (error) {

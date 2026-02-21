@@ -8,16 +8,15 @@ interface Props {
 
 export default function PaymentModal({ onClose }: Props) {
   const paymentRef = useRef<HTMLDivElement>(null);
+  // [FIX] CRITICAL 7: 위젯 인스턴스를 useRef로 공유
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const widgetRef = useRef<any>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    let widget: any = null;
-
     const initPayment = async () => {
       try {
-        // 토스 SDK 동적 로드
         const { loadTossPayments } = await import("@tosspayments/tosspayments-sdk");
 
         const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY;
@@ -28,7 +27,8 @@ export default function PaymentModal({ onClose }: Props) {
         }
 
         const tossPayments = await loadTossPayments(clientKey);
-        widget = tossPayments.widgets({ customerKey: "ANONYMOUS" });
+        const widget = tossPayments.widgets({ customerKey: "ANONYMOUS" });
+        widgetRef.current = widget;
 
         await widget.setAmount({ currency: "KRW", value: 1900 });
 
@@ -48,29 +48,32 @@ export default function PaymentModal({ onClose }: Props) {
     };
 
     initPayment();
-
-    return () => {
-      // cleanup
-    };
   }, []);
+
+  // [FIX] WARNING: ESC 키로 모달 닫기
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", handleEsc);
+    return () => window.removeEventListener("keydown", handleEsc);
+  }, [onClose]);
 
   const handlePayment = async () => {
     try {
-      // orderId는 이미 /api/payment/ready에서 생성됨
-      // localStorage에서 가져오거나 새로 생성
       const pendingOrderId = localStorage.getItem("pendingOrderId");
       if (!pendingOrderId) {
         setError("결제 정보가 없습니다. 다시 시도해주세요.");
         return;
       }
 
-      const { loadTossPayments } = await import("@tosspayments/tosspayments-sdk");
-      const clientKey = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY!;
-      const tossPayments = await loadTossPayments(clientKey);
-      const widget = tossPayments.widgets({ customerKey: "ANONYMOUS" });
-      await widget.setAmount({ currency: "KRW", value: 1900 });
+      // [FIX] CRITICAL 7: useRef의 위젯 인스턴스 재사용
+      if (!widgetRef.current) {
+        setError("결제 모듈이 준비되지 않았습니다.");
+        return;
+      }
 
-      await widget.requestPayment({
+      await widgetRef.current.requestPayment({
         orderId: pendingOrderId,
         orderName: "천명 프리미엄 분석",
         successUrl: `${window.location.origin}/payment/success`,
@@ -87,14 +90,20 @@ export default function PaymentModal({ onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center bg-black/60">
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="payment-title"
+    >
       <div className="w-full max-w-lg bg-cm-deep border-t border-cm-gold/20 rounded-t-2xl p-5 animate-slideUp">
         {/* 헤더 */}
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-serif text-lg text-cm-gold">프리미엄 결제</h3>
+          <h3 id="payment-title" className="font-serif text-lg text-cm-gold">프리미엄 결제</h3>
           <button
             onClick={onClose}
             className="text-cm-beige/40 hover:text-cm-beige text-xl"
+            aria-label="닫기"
           >
             ✕
           </button>

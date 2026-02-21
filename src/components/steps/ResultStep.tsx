@@ -14,6 +14,7 @@ import FaceDetailAnalysis from "@/components/premium/FaceDetailAnalysis";
 import DaeunDetailSection from "@/components/premium/DaeunDetailSection";
 import YongshinSection from "@/components/premium/YongshinSection";
 import PdfDownloadButton from "@/components/premium/PdfDownloadButton";
+import { parseMarkdown } from "@/lib/parse-markdown";
 import type { AnalysisResult, PremiumData } from "@/lib/types";
 
 interface ResultStepProps {
@@ -22,15 +23,6 @@ interface ResultStepProps {
   onRestart: () => void;
   premiumData?: PremiumData | null;
   onPaymentReady?: () => Promise<{ orderId: string; amount: number } | null>;
-}
-
-function parseMarkdown(text: string): string {
-  return text
-    .replace(/## (.*)/g, '<h2 class="font-serif text-lg text-cm-gold mt-6 mb-2">$1</h2>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-cm-gold">$1</strong>')
-    .replace(/\n- (.*)/g, '\n<li class="ml-4 text-sm leading-relaxed text-cm-beige/80">$1</li>')
-    .replace(/\n\n/g, '<br/><br/>')
-    .replace(/\n/g, '<br/>');
 }
 
 export default function ResultStep({

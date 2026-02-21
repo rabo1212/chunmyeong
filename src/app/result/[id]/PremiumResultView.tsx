@@ -11,16 +11,8 @@ import DaeunDetailSection from "@/components/premium/DaeunDetailSection";
 import YongshinSection from "@/components/premium/YongshinSection";
 import PdfDownloadButton from "@/components/premium/PdfDownloadButton";
 import ShareButtons from "@/components/ShareButtons";
+import { parseMarkdown } from "@/lib/parse-markdown";
 import type { PremiumResult } from "@/lib/types";
-
-function parseMarkdown(text: string): string {
-  return text
-    .replace(/## (.*)/g, '<h2 class="font-serif text-lg text-cm-gold mt-6 mb-2">$1</h2>')
-    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-cm-gold">$1</strong>')
-    .replace(/\n- (.*)/g, '\n<li class="ml-4 text-sm leading-relaxed text-cm-beige/80">$1</li>')
-    .replace(/\n\n/g, "<br/><br/>")
-    .replace(/\n/g, "<br/>");
-}
 
 export default function PremiumResultView({ result }: { result: PremiumResult }) {
   const { saju, interpretation, premium } = result;
