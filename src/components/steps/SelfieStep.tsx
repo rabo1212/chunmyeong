@@ -54,6 +54,7 @@ export default function SelfieStep({ onNext, onBack }: SelfieStepProps) {
                 playsInline
                 muted
                 className="w-full h-full object-cover"
+                style={{ transform: "scaleX(-1)" }}
               />
               <div className="face-guide" />
             </>
