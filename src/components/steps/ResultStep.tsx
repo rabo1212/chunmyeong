@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import SajuChart from "@/components/ui/SajuChart";
 import OhengChart from "@/components/ui/OhengChart";
+import SinsalSection from "@/components/ui/SinsalSection";
 import ResultCard from "@/components/ResultCard";
 import ShareButtons from "@/components/ShareButtons";
 import type { AnalysisResult } from "@/lib/types";
@@ -86,11 +87,20 @@ export default function ResultStep({ result, name, onRestart }: ResultStepProps)
         </motion.div>
       )}
 
-      {/* AI 해석 */}
+      {/* 신살 분석 */}
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: 0.6 }}
+      >
+        <SinsalSection pillars={saju.pillars} specialSinsal={saju.specialSinsal} />
+      </motion.div>
+
+      {/* AI 해석 */}
+      <motion.div
+        initial={{ y: 20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.8 }}
         className="card p-5"
       >
         <h3 className="font-serif text-lg text-cm-gold text-center mb-4">
@@ -111,7 +121,7 @@ export default function ResultStep({ result, name, onRestart }: ResultStepProps)
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.8 }}
+        transition={{ delay: 1.0 }}
       >
         <h3 className="text-sm text-cm-beige/60 text-center mb-3">결과 공유하기</h3>
         <ShareButtons />

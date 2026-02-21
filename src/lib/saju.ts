@@ -9,6 +9,7 @@ import type { BirthInput } from "@orrery/core/types";
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { Lunar } = require("lunar-javascript");
 import type { BirthInfo, SajuData, PillarData, OhengDistribution } from "./types";
+import { calcSpecialSinsal } from "./sinsal";
 
 const ELEMENT_KR: Record<string, string> = {
   tree: "목(木)",
@@ -97,6 +98,15 @@ export function computeSaju(birthInfo: BirthInfo): SajuData {
     unseong: dw.unseong,
   }));
 
+  // 특수 신살 계산
+  const allStems = birthInfo.unknownTime
+    ? [nyeonPillar.pillar.stem, wolPillar.pillar.stem, ilPillar.pillar.stem]
+    : [nyeonPillar.pillar.stem, wolPillar.pillar.stem, ilPillar.pillar.stem, siPillar.pillar.stem];
+  const allBranches = birthInfo.unknownTime
+    ? [nyeonPillar.pillar.branch, wolPillar.pillar.branch, ilPillar.pillar.branch]
+    : [nyeonPillar.pillar.branch, wolPillar.pillar.branch, ilPillar.pillar.branch, siPillar.pillar.branch];
+  const specialSinsal = calcSpecialSinsal(allStems, allBranches, ilPillar.pillar.ganzi);
+
   // AI 전달용 사주 요약 텍스트
   const dayMasterKr = `${stemToKr(dayMaster)}${ELEMENT_KR[dayMasterElement] || dayMasterElement}`;
   const pillarsText = `${nyeonPillar.pillar.ganzi}년 ${wolPillar.pillar.ganzi}월 ${ilPillar.pillar.ganzi}일${birthInfo.unknownTime ? "" : ` ${siPillar.pillar.ganzi}시`}`;
@@ -116,11 +126,26 @@ export function computeSaju(birthInfo: BirthInfo): SajuData {
     .map((d) => `${d.ganzi}(${d.age}세~)`)
     .join(" → ");
 
+  // 12신살 텍스트
+  const sinsal12Text = allPillars
+    .map((p, i) => {
+      const names = ["년주", "월주", "일주", "시주"];
+      return `${names[i]}: ${p.sinsal}`;
+    })
+    .join(", ");
+
+  // 특수 신살 텍스트
+  const specialSinsalText = specialSinsal.length > 0
+    ? specialSinsal.map((s) => `${s.name}(${s.hanja}) [${s.positions.join("·")}]`).join(", ")
+    : "없음";
+
   const summary = [
     `사주: ${pillarsText}`,
     `일간(Day Master): ${dayMasterKr}`,
     `오행분포: ${ohengText}`,
     `십신: ${sipsinText}`,
+    `12신살: ${sinsal12Text}`,
+    `특수신살: ${specialSinsalText}`,
     `대운흐름: ${daeunText}`,
     `성별: ${birthInfo.gender === "male" ? "남성" : "여성"}`,
     `생년: ${birthInfo.year}년`,
@@ -137,6 +162,7 @@ export function computeSaju(birthInfo: BirthInfo): SajuData {
     dayMasterElement,
     oheng,
     daeun,
+    specialSinsal,
     summary,
   };
 }

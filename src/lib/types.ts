@@ -38,6 +38,14 @@ export interface OhengDistribution {
   water: number;   // 수
 }
 
+export interface SpecialSinsalData {
+  name: string;
+  hanja: string;
+  emoji: string;
+  desc: string;
+  positions: string[];
+}
+
 export interface SajuData {
   pillars: {
     year: PillarData;
@@ -49,6 +57,7 @@ export interface SajuData {
   dayMasterElement: string;   // 일간 오행 (예: 'tree')
   oheng: OhengDistribution;
   daeun: DaeunData[];
+  specialSinsal: SpecialSinsalData[];  // 특수 신살
   summary: string;            // AI 전달용 사주 요약 텍스트
 }
 
