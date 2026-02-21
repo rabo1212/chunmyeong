@@ -6,6 +6,7 @@ import OhengChart from "@/components/ui/OhengChart";
 import SinsalSection from "@/components/ui/SinsalSection";
 import ResultCard from "@/components/ResultCard";
 import ShareButtons from "@/components/ShareButtons";
+import CoupangBanner from "@/components/CoupangBanner";
 import type { AnalysisResult } from "@/lib/types";
 
 interface ResultStepProps {
@@ -126,6 +127,11 @@ export default function ResultStep({ result, name, onRestart }: ResultStepProps)
         <h3 className="text-sm text-cm-beige/60 text-center mb-3">결과 공유하기</h3>
         <ShareButtons />
       </motion.div>
+
+      {/* 쿠팡 파트너스 */}
+      <div className="flex justify-center">
+        <CoupangBanner />
+      </div>
 
       {/* 다시 하기 */}
       <div className="text-center pt-4 pb-8">
