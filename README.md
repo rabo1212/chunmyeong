@@ -1,3 +1,23 @@
+# 천명(天命) - AI 사주 × 관상 통합 분석
+
+AI 기반 사주팔자와 관상 분석 웹 앱입니다.
+
+## License
+
+This project is licensed under **AGPL-3.0** to comply with the license of its core dependency.
+
+### Open Source Notice
+
+This project uses the following open source libraries:
+
+| Package | License | Description |
+|---------|---------|-------------|
+| [@orrery/core](https://github.com/nicholaschenai/orrery) | AGPL-3.0 | 사주/자미두수 천문 계산 엔진 |
+
+In accordance with AGPL-3.0, the complete source code of this project is publicly available at: https://github.com/rabo1212/chunmyeong
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
