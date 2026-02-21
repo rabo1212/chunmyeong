@@ -9,20 +9,20 @@ interface BirthInfoStepProps {
   onBack: () => void;
 }
 
-const SICHINS = [
-  { label: "자시 (23:00~01:00)", hour: 0 },
-  { label: "축시 (01:00~03:00)", hour: 2 },
-  { label: "인시 (03:00~05:00)", hour: 4 },
-  { label: "묘시 (05:00~07:00)", hour: 6 },
-  { label: "진시 (07:00~09:00)", hour: 8 },
-  { label: "사시 (09:00~11:00)", hour: 10 },
-  { label: "오시 (11:00~13:00)", hour: 12 },
-  { label: "미시 (13:00~15:00)", hour: 14 },
-  { label: "신시 (15:00~17:00)", hour: 16 },
-  { label: "유시 (17:00~19:00)", hour: 18 },
-  { label: "술시 (19:00~21:00)", hour: 20 },
-  { label: "해시 (21:00~23:00)", hour: 22 },
-];
+const HOURS = Array.from({ length: 24 }, (_, i) => i);
+const MINUTES = Array.from({ length: 60 }, (_, i) => i);
+
+function getSichinName(hour: number): string {
+  const names = [
+    "자시(子時)", "자시(子時)", "축시(丑時)", "축시(丑時)",
+    "인시(寅時)", "인시(寅時)", "묘시(卯時)", "묘시(卯時)",
+    "진시(辰時)", "진시(辰時)", "사시(巳時)", "사시(巳時)",
+    "오시(午時)", "오시(午時)", "미시(未時)", "미시(未時)",
+    "신시(申時)", "신시(申時)", "유시(酉時)", "유시(酉時)",
+    "술시(戌時)", "술시(戌時)", "해시(亥時)", "해시(亥時)",
+  ];
+  return names[hour] || "";
+}
 
 const currentYear = new Date().getFullYear();
 const YEARS = Array.from({ length: currentYear - 1920 + 1 }, (_, i) => currentYear - i);
@@ -36,7 +36,8 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
   const [year, setYear] = useState(1990);
   const [month, setMonth] = useState(1);
   const [day, setDay] = useState(1);
-  const [sichinIdx, setSichinIdx] = useState(0);
+  const [hour, setHour] = useState(12);
+  const [minute, setMinute] = useState(0);
   const [unknownTime, setUnknownTime] = useState(false);
   const [gender, setGender] = useState<"male" | "female">("male");
   const [name, setName] = useState("");
@@ -51,8 +52,8 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
       year,
       month,
       day,
-      hour: unknownTime ? 12 : SICHINS[sichinIdx].hour,
-      minute: 0,
+      hour: unknownTime ? 12 : hour,
+      minute: unknownTime ? 0 : minute,
       gender,
       unknownTime,
       name: name.trim() || undefined,
@@ -139,17 +140,35 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
           </label>
         </div>
         {!unknownTime && (
-          <select
-            value={sichinIdx}
-            onChange={(e) => setSichinIdx(Number(e.target.value))}
-            className="w-full bg-cm-navy/60 border border-cm-gold/20 rounded-lg px-3 py-2.5 text-cm-ivory focus:outline-none focus:border-cm-gold/50"
-          >
-            {SICHINS.map((s, i) => (
-              <option key={i} value={i}>
-                {s.label}
-              </option>
-            ))}
-          </select>
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2">
+              <select
+                value={hour}
+                onChange={(e) => setHour(Number(e.target.value))}
+                className="bg-cm-navy/60 border border-cm-gold/20 rounded-lg px-3 py-2.5 text-cm-ivory focus:outline-none focus:border-cm-gold/50"
+              >
+                {HOURS.map((h) => (
+                  <option key={h} value={h}>
+                    {String(h).padStart(2, "0")}시
+                  </option>
+                ))}
+              </select>
+              <select
+                value={minute}
+                onChange={(e) => setMinute(Number(e.target.value))}
+                className="bg-cm-navy/60 border border-cm-gold/20 rounded-lg px-3 py-2.5 text-cm-ivory focus:outline-none focus:border-cm-gold/50"
+              >
+                {MINUTES.map((m) => (
+                  <option key={m} value={m}>
+                    {String(m).padStart(2, "0")}분
+                  </option>
+                ))}
+              </select>
+            </div>
+            <p className="text-xs text-cm-gold/60">
+              {getSichinName(hour)} · 정확한 시간일수록 분석이 정밀해집니다
+            </p>
+          </div>
         )}
         {unknownTime && (
           <p className="text-xs text-cm-beige/40 mt-1">
