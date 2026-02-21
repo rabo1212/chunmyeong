@@ -89,7 +89,7 @@ export default function PremiumUpsell({ onPaymentReady }: Props) {
         {/* 가격 비교 */}
         <div className="text-center mb-4">
           <p className="text-xs text-cm-beige/50 mb-1">
-            ⚡ 사주 카페 평균 3~5만원
+            ☕ 아메리카노 한 잔보다 저렴하게 확인하는 내 운세
           </p>
           <p className="text-sm text-cm-ivory">
             천명 프리미엄{" "}
