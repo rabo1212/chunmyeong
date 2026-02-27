@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import { computeSaju } from "@/lib/saju";
 import { computeZiwei, computeLiunian, computeDaxianList } from "@/lib/ziwei";
 import {
@@ -69,30 +69,32 @@ export async function POST(request: NextRequest) {
     const liunianData = computeLiunian(birthInfo, currentYear);
     const daxianList = computeDaxianList(birthInfo);
 
-    // 2. Claude API 호출 — 12섹션 2회 분할 병렬
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) throw new Error("ANTHROPIC_API_KEY 환경변수 없음");
-    const anthropic = new Anthropic({ apiKey });
+    // 2. OpenAI API 호출 — 12섹션 2회 분할 병렬
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) throw new Error("OPENAI_API_KEY 환경변수 없음");
+    const openai = new OpenAI({ apiKey });
 
     const prompt1 = buildSections1to6Prompt(saju.summary, birthInfo.name);
     const prompt2 = buildSections7to12Prompt(saju.summary, birthInfo.name, currentYear);
 
-    const callClaude = async (prompt: string, system: string): Promise<string> => {
-      const response = await anthropic.messages.create({
-        model: "claude-3-haiku-20240307",
+    const callGPT = async (prompt: string, system: string): Promise<string> => {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
         max_tokens: 4000,
         temperature: 0.7,
-        system,
-        messages: [{ role: "user", content: prompt }],
+        messages: [
+          { role: "system", content: system },
+          { role: "user", content: prompt },
+        ],
       });
 
-      return response.content[0].type === "text" ? response.content[0].text : "";
+      return response.choices[0]?.message?.content ?? "";
     };
 
     // 2개 병렬 호출: 섹션1~6, 섹션7~12
     const results = await Promise.allSettled([
-      callClaude(prompt1, SAJU_SYSTEM_PROMPT),
-      callClaude(prompt2, SAJU_SYSTEM_PROMPT),
+      callGPT(prompt1, SAJU_SYSTEM_PROMPT),
+      callGPT(prompt2, SAJU_SYSTEM_PROMPT),
     ]);
 
     // 12섹션 파싱
@@ -128,7 +130,7 @@ export async function POST(request: NextRequest) {
     if (sections.length === 0) {
       console.warn("12섹션 생성 실패, 레거시 폴백");
       const legacyPrompt = buildAnalysisPrompt(saju.summary, currentYear);
-      const fallback = await callClaude(legacyPrompt, SAJU_SYSTEM_PROMPT_LEGACY);
+      const fallback = await callGPT(legacyPrompt, SAJU_SYSTEM_PROMPT_LEGACY);
       interpretation = fallback;
     }
 

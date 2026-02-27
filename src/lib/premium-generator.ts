@@ -1,4 +1,4 @@
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import {
   PREMIUM_SYSTEM_PROMPT,
   buildZiweiYongshinPrompt,
@@ -26,17 +26,15 @@ interface PremiumInput {
   daxianList: DaxianItem[];
 }
 
-// [FIX] WARNING: JSON 파싱 개선 — 더 범용적인 블록 추출
+// JSON 파싱 헬퍼
 function parseJSON<T>(text: string): T {
   let cleaned = text.trim();
 
-  // ```json ... ``` 블록 추출 (앞뒤 설명 텍스트 대응)
   const codeBlockMatch = cleaned.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
   if (codeBlockMatch) {
     cleaned = codeBlockMatch[1].trim();
   }
 
-  // 그래도 파싱 안 되면 { } 블록만 추출
   try {
     return JSON.parse(cleaned);
   } catch {
@@ -48,47 +46,46 @@ function parseJSON<T>(text: string): T {
   }
 }
 
-// Claude API 호출 (1회 재시도)
-async function callClaude(
-  anthropic: Anthropic,
+// OpenAI API 호출 (1회 재시도)
+async function callGPT(
+  openai: OpenAI,
   prompt: string,
 ): Promise<string> {
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const response = await anthropic.messages.create({
-        model: "claude-3-haiku-20240307",
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
         max_tokens: 4000,
         temperature: 0.7,
-        system: PREMIUM_SYSTEM_PROMPT,
-        messages: [{ role: "user", content: prompt }],
+        messages: [
+          { role: "system", content: PREMIUM_SYSTEM_PROMPT },
+          { role: "user", content: prompt },
+        ],
       });
 
-      const text = response.content[0].type === "text" ? response.content[0].text : "";
-      return text;
+      return response.choices[0]?.message?.content ?? "";
     } catch (error) {
       if (attempt === 0) {
-        console.warn("Premium Claude call failed, retrying:", error);
+        console.warn("Premium GPT call failed, retrying:", error);
         continue;
       }
       throw error;
     }
   }
-  throw new Error("Claude call failed after retries");
+  throw new Error("GPT call failed after retries");
 }
 
 export async function generatePremiumContent(input: PremiumInput): Promise<PremiumData> {
-  // [FIX] WARNING: API 키 명시적 검증
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) throw new Error("ANTHROPIC_API_KEY 환경변수가 설정되지 않았습니다.");
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) throw new Error("OPENAI_API_KEY 환경변수가 설정되지 않았습니다.");
 
-  const anthropic = new Anthropic({ apiKey });
+  const openai = new OpenAI({ apiKey });
 
   const targetYear = new Date().getFullYear();
   const liunianSummary = buildLiunianSummary(input.liunianData);
 
-  // [FIX] CRITICAL 8: birthYear 계산 수정 — saju.birthInfo에서 직접 가져옴
   const birthYear = input.saju.birthInfo?.year
-    ?? (targetYear - 30); // fallback
+    ?? (targetYear - 30);
   const daeunSummary = buildDaeunSummary(input.saju.daeun, birthYear);
 
   // 프롬프트 3종 구성
@@ -102,9 +99,9 @@ export async function generatePremiumContent(input: PremiumInput): Promise<Premi
 
   // Promise.allSettled — 부분 실패 허용
   const results = await Promise.allSettled([
-    callClaude(anthropic, prompt1),
-    callClaude(anthropic, prompt2),
-    callClaude(anthropic, prompt3),
+    callGPT(openai, prompt1),
+    callGPT(openai, prompt2),
+    callGPT(openai, prompt3),
   ]);
 
   // 결과 파싱 (실패 시 기본값)
