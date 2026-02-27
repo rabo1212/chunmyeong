@@ -1,6 +1,6 @@
 // 프리미엄 Claude 프롬프트 (3종 — 각각 별도 호출)
 
-export const PREMIUM_SYSTEM_PROMPT = `당신은 40년 경력의 사주명리학·자미두수·관상학 통합 전문가 '천명 선생'입니다.
+export const PREMIUM_SYSTEM_PROMPT = `당신은 40년 경력의 사주명리학·자미두수 통합 전문가 '천명 선생'입니다.
 전문적이면서도 따뜻한 톤으로, 구체적이고 개인화된 분석을 제공합니다.
 반드시 한국어로 답변합니다. 부정적 요소는 "주의할 점" 또는 "성장 기회"로 표현합니다.
 건강/수명에 대한 부정적 예측은 절대 하지 않습니다.
@@ -81,17 +81,12 @@ ${targetYear}년 1월~12월 운세를 아래 JSON 형식으로 응답하세요.
 ]}`;
 }
 
-// 프롬프트 3: 관상 심층 + 대운 상세
-export function buildFaceDaeunPrompt(
+// 프롬프트 3: 대운 상세
+export function buildDaeunDetailPrompt(
   sajuSummary: string,
   freeInterpretation: string,
   daeunSummary: string,
-  hasFacePhoto: boolean
 ): string {
-  const faceInstruction = hasFacePhoto
-    ? `위 사진의 관상을 5개 영역별로 심층 분석하고, 사주 데이터와 교차 분석하세요.`
-    : `사주 데이터를 기반으로 각 영역의 관상학적 경향을 추론하여 분석하세요. (사진 없음)`;
-
   return `다음은 한 사람의 사주와 기존 분석 결과입니다.
 
 [사주 데이터]
@@ -103,18 +98,9 @@ ${freeInterpretation}
 [대운 흐름]
 ${daeunSummary}
 
-${faceInstruction}
-
-아래 JSON 형식으로 응답하세요:
+대운 흐름을 심층 분석하여 아래 JSON 형식으로 응답하세요:
 
 {
-  "faceAreas": [
-    {"area":"forehead","areaLabel":"이마","areaEmoji":"🧠","faceReading":"이마 관상 심층 분석 3-4문장...","sajuCross":"사주와의 교차 분석 2-3문장...","advice":"실생활 조언 1문장"},
-    {"area":"eyes","areaLabel":"눈 & 눈썹","areaEmoji":"👁️","faceReading":"...","sajuCross":"...","advice":"..."},
-    {"area":"nose","areaLabel":"코","areaEmoji":"👃","faceReading":"...","sajuCross":"...","advice":"..."},
-    {"area":"mouth","areaLabel":"입 & 턱","areaEmoji":"👄","faceReading":"...","sajuCross":"...","advice":"..."},
-    {"area":"overall","areaLabel":"전체 인상","areaEmoji":"✨","faceReading":"...","sajuCross":"...","advice":"..."}
-  ],
   "daeunDetail": {
     "current": {
       "ganzi":"辛未",

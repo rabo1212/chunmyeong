@@ -12,34 +12,34 @@ export default function ZiweiPalaceCards({ palaces }: Props) {
   const [expanded, setExpanded] = useState<number | null>(0);
 
   return (
-    <div className="card p-4">
-      <h3 className="font-serif text-lg text-cm-gold text-center mb-4">
-        紫微斗數 자미두수 12궁 분석
+    <div className="py-6 border-b border-cm-dim/10">
+      <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted text-center mb-5">
+        자미두수 12궁 분석
       </h3>
 
-      <div className="space-y-2">
+      <div className="space-y-0">
         {palaces.map((palace, i) => (
           <div
             key={palace.palaceName}
-            className="border border-cm-gold/10 rounded-lg overflow-hidden"
+            className="border-b border-cm-dim/8"
           >
             {/* 궁 헤더 */}
             <button
               onClick={() => setExpanded(expanded === i ? null : i)}
-              className="w-full flex items-center gap-3 px-3 py-2.5 bg-cm-navy/60 hover:bg-cm-navy/80 transition-colors text-left"
+              className="w-full flex items-center gap-3 px-1 py-3.5 hover:bg-cm-surface/30 transition-colors text-left"
             >
-              <span className="text-xl">{palace.palaceEmoji}</span>
+              <span className="text-lg">{palace.palaceEmoji}</span>
               <div className="flex-1 min-w-0">
-                <span className="font-serif text-sm text-cm-ivory">
+                <span className="text-[13px] text-cm-text">
                   {palace.palaceName}
                 </span>
                 {palace.stars.length > 0 && (
-                  <p className="text-[10px] text-cm-beige/40 truncate">
+                  <p className="text-[10px] text-cm-dim truncate">
                     {palace.stars.join(" · ")}
                   </p>
                 )}
               </div>
-              <span className="text-cm-beige/30 text-xs">
+              <span className="text-cm-dim text-[10px]">
                 {expanded === i ? "▲" : "▼"}
               </span>
             </button>
@@ -54,8 +54,8 @@ export default function ZiweiPalaceCards({ palaces }: Props) {
                   transition={{ duration: 0.2 }}
                   className="overflow-hidden"
                 >
-                  <div className="px-3 py-3 bg-cm-deep/40 border-t border-cm-gold/10">
-                    <p className="text-sm leading-relaxed text-cm-beige/80">
+                  <div className="px-1 pb-4 pt-1">
+                    <p className="text-[13px] leading-[1.9] text-cm-muted">
                       {palace.analysis}
                     </p>
                   </div>

@@ -20,14 +20,14 @@ const BRANCH_ELEMENT: Record<string, string> = {
   "申": "metal", "酉": "metal", "戌": "earth", "亥": "water",
 };
 
-function getElementColor(el: string): string {
+function getElementTextColor(el: string): string {
   switch (el) {
-    case "wood": return "bg-oheng-wood/20 text-oheng-wood border-oheng-wood/30";
-    case "fire": return "bg-oheng-fire/20 text-oheng-fire border-oheng-fire/30";
-    case "earth": return "bg-oheng-earth/20 text-oheng-earth border-oheng-earth/30";
-    case "metal": return "bg-oheng-metal/20 text-oheng-metal border-oheng-metal/30";
-    case "water": return "bg-oheng-water/20 text-oheng-water border-oheng-water/30";
-    default: return "bg-cm-deep text-cm-beige border-cm-gold/20";
+    case "wood": return "text-oheng-wood";
+    case "fire": return "text-oheng-fire";
+    case "earth": return "text-oheng-earth";
+    case "metal": return "text-oheng-metal";
+    case "water": return "text-oheng-water";
+    default: return "text-cm-muted";
   }
 }
 
@@ -43,14 +43,14 @@ function PillarColumn({
   if (!pillar) {
     return (
       <div className="flex flex-col items-center gap-1">
-        <span className="text-[10px] text-cm-beige/40">{label}</span>
-        <div className="w-14 h-14 rounded-lg bg-cm-deep/50 border border-cm-gold/10 flex items-center justify-center text-cm-beige/20 text-xs">
+        <span className="text-[10px] uppercase tracking-[0.1em] text-cm-dim">{label}</span>
+        <div className="w-14 h-14 border border-cm-dim/10 flex items-center justify-center text-cm-dim/40 text-xs">
           ?
         </div>
-        <div className="w-14 h-14 rounded-lg bg-cm-deep/50 border border-cm-gold/10 flex items-center justify-center text-cm-beige/20 text-xs">
+        <div className="w-14 h-14 border border-cm-dim/10 flex items-center justify-center text-cm-dim/40 text-xs">
           ?
         </div>
-        <span className="text-[10px] text-cm-beige/30">시간 미상</span>
+        <span className="text-[10px] text-cm-dim/60">시간 미상</span>
       </div>
     );
   }
@@ -60,29 +60,29 @@ function PillarColumn({
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="text-[10px] text-cm-beige/50">{label}</span>
-      <span className="text-[10px] text-cm-gold/60">{pillar.stemSipsin || ""}</span>
+      <span className="text-[10px] uppercase tracking-[0.1em] text-cm-dim">{label}</span>
+      <span className="text-[10px] text-cm-accent/60">{pillar.stemSipsin || ""}</span>
       <div
-        className={`w-14 h-14 rounded-lg border flex flex-col items-center justify-center ${getElementColor(stemEl)} ${isDayMaster ? "ring-2 ring-cm-gold/50" : ""}`}
+        className={`w-14 h-14 border border-cm-dim/15 flex flex-col items-center justify-center ${isDayMaster ? "border-cm-accent/40" : ""}`}
       >
-        <span className="text-2xl font-serif font-bold">{pillar.stem}</span>
+        <span className={`text-2xl font-serif ${getElementTextColor(stemEl)}`}>{pillar.stem}</span>
       </div>
       <div
-        className={`w-14 h-14 rounded-lg border flex flex-col items-center justify-center ${getElementColor(branchEl)}`}
+        className="w-14 h-14 border border-cm-dim/15 flex flex-col items-center justify-center"
       >
-        <span className="text-2xl font-serif font-bold">{pillar.branch}</span>
+        <span className={`text-2xl font-serif ${getElementTextColor(branchEl)}`}>{pillar.branch}</span>
       </div>
-      <span className="text-[10px] text-cm-beige/50">{pillar.branchSipsin || ""}</span>
-      <span className="text-[9px] text-cm-beige/30">{pillar.unseong || ""}</span>
+      <span className="text-[10px] text-cm-dim">{pillar.branchSipsin || ""}</span>
+      <span className="text-[9px] text-cm-dim/60">{pillar.unseong || ""}</span>
     </div>
   );
 }
 
 export default function SajuChart({ saju }: SajuChartProps) {
   return (
-    <div className="card p-4">
-      <h3 className="font-serif text-lg text-cm-gold text-center mb-4">
-        四柱八字 사주팔자
+    <div className="py-6 border-b border-cm-dim/10">
+      <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted text-center mb-5">
+        사주팔자
       </h3>
 
       <div className="flex justify-center gap-4">
@@ -92,8 +92,8 @@ export default function SajuChart({ saju }: SajuChartProps) {
         <PillarColumn label="년주" pillar={saju.pillars.year} />
       </div>
 
-      <p className="text-center text-xs text-cm-beige/40 mt-3">
-        일간(日干): <span className="text-cm-gold">{saju.dayMaster}</span> — 나를 대표하는 오행
+      <p className="text-center text-[11px] text-cm-dim mt-4">
+        일간: <span className="text-cm-accent">{saju.dayMaster}</span> — 나를 대표하는 오행
       </p>
     </div>
   );

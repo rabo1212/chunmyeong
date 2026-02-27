@@ -6,7 +6,6 @@ import OhengChart from "@/components/ui/OhengChart";
 import SinsalSection from "@/components/ui/SinsalSection";
 import ZiweiPalaceCards from "@/components/premium/ZiweiPalaceCards";
 import MonthlyTimeline from "@/components/premium/MonthlyTimeline";
-import FaceDetailAnalysis from "@/components/premium/FaceDetailAnalysis";
 import DaeunDetailSection from "@/components/premium/DaeunDetailSection";
 import YongshinSection from "@/components/premium/YongshinSection";
 import PdfDownloadButton from "@/components/premium/PdfDownloadButton";
@@ -19,17 +18,17 @@ export default function PremiumResultView({ result }: { result: PremiumResult })
 
   return (
     <main className="flex-1 max-w-lg mx-auto">
-      <div id="premium-result-container" className="px-4 py-6 space-y-6 no-scrollbar">
+      <div id="premium-result-container" className="px-4 py-8 space-y-8 no-scrollbar">
         {/* 프리미엄 배지 */}
-        <div className="text-center">
-          <span className="inline-block px-3 py-1 bg-cm-gold/20 border border-cm-gold/40 rounded-full text-xs text-cm-gold mb-2">
-            PREMIUM
+        <div className="text-center py-4">
+          <span className="inline-block px-4 py-1.5 border border-cm-accent/20 text-[10px] uppercase tracking-[0.3em] text-cm-accent mb-3">
+            Premium
           </span>
-          <h2 className="font-serif text-2xl text-cm-gold glow-gold">
+          <h2 className="font-serif text-3xl font-normal text-cm-text">
             프리미엄 천명 분석
           </h2>
-          <p className="text-sm text-cm-beige/50 mt-1">
-            사주팔자 × 자미두수 × AI 관상 통합 분석
+          <p className="text-[11px] uppercase tracking-[0.15em] text-cm-muted mt-3">
+            Saju &middot; Ziwei &middot; Deep Analysis
           </p>
         </div>
 
@@ -49,19 +48,25 @@ export default function PremiumResultView({ result }: { result: PremiumResult })
         </motion.div>
 
         {/* AI 종합 해석 */}
-        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }} className="card p-5">
-          <h3 className="font-serif text-lg text-cm-gold text-center mb-4">AI 종합 해석</h3>
+        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.4 }}
+          className="py-6 border-t border-cm-dim/10"
+        >
+          <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted text-center mb-5">AI 종합 해석</h3>
           <div
-            className="text-sm leading-relaxed text-cm-beige/80 space-y-1"
+            className="text-[13px] leading-[1.9] text-cm-muted"
             dangerouslySetInnerHTML={{ __html: parseMarkdown(interpretation) }}
           />
         </motion.div>
 
         {/* === 프리미엄 섹션 === */}
-        <div className="border-t border-cm-gold/20 pt-6">
-          <h3 className="font-serif text-center text-cm-gold text-lg mb-6 glow-gold">
-            프리미엄 심층 분석
-          </h3>
+        <div className="pt-8">
+          <div className="flex items-center gap-4 mb-8">
+            <div className="flex-1 h-[1px] bg-cm-accent/15" />
+            <h3 className="text-[10px] uppercase tracking-[0.3em] text-cm-accent">
+              Premium Analysis
+            </h3>
+            <div className="flex-1 h-[1px] bg-cm-accent/15" />
+          </div>
         </div>
 
         {/* 자미두수 12궁 */}
@@ -75,13 +80,6 @@ export default function PremiumResultView({ result }: { result: PremiumResult })
         {premium.monthlyFortune && (
           <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.6 }}>
             <MonthlyTimeline fortunes={premium.monthlyFortune} />
-          </motion.div>
-        )}
-
-        {/* 관상 심층 분석 */}
-        {premium.faceAreas && (
-          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.7 }}>
-            <FaceDetailAnalysis areas={premium.faceAreas} />
           </motion.div>
         )}
 
@@ -106,17 +104,17 @@ export default function PremiumResultView({ result }: { result: PremiumResult })
 
         {/* 공유 */}
         <div>
-          <h3 className="text-sm text-cm-beige/60 text-center mb-3">결과 공유하기</h3>
+          <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-dim text-center mb-4">Share</h3>
           <ShareButtons />
         </div>
 
         {/* 면책 */}
-        <p className="text-[10px] text-cm-beige/30 text-center leading-relaxed">
-          본 서비스는 엔터테인먼트 목적이며, 관상학·사주학적 해석은 과학적 근거에 기반하지 않습니다.
+        <p className="text-[10px] uppercase tracking-[0.1em] text-cm-dim/60 text-center leading-relaxed">
+          본 서비스는 엔터테인먼트 목적이며, 사주학적 해석은 과학적 근거에 기반하지 않습니다.
         </p>
 
         {/* 다시 분석 */}
-        <div className="text-center pt-4 pb-8">
+        <div className="text-center pt-4 pb-10">
           <a href="/" className="btn-secondary inline-block">
             새로 분석하기
           </a>

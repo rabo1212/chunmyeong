@@ -10,20 +10,34 @@ const config: Config = {
     extend: {
       colors: {
         cm: {
-          navy: "#1a1a2e",
-          deep: "#16213e",
-          beige: "#e2d9c8",
-          gold: "#c9a96e",
-          ivory: "#faf8f5",
-          red: "#d4483b",
-          charcoal: "#2d2d2d",
+          // 배경 (순수 블랙 — A24 스타일)
+          bg: "#000000",
+          surface: "#0a0a0a",
+          card: "#111111",
+          elevated: "#1a1a1a",
+          // 텍스트 (크림 화이트)
+          text: "#f0ede6",
+          muted: "#8a8680",
+          dim: "#4a4744",
+          // 악센트 (골드 크림)
+          accent: "#d4c5a0",
+          "accent-soft": "#b8a882",
+          cream: "#f5f0e8",
+          gold: "#d4c5a0",
+          red: "#ef4444",
+          // 하위 호환
+          ivory: "#f5f0e8",
+          navy: "#000000",
+          deep: "#0a0a0a",
+          beige: "#8a8680",
+          charcoal: "#1a1a1a",
         },
         oheng: {
-          wood: "#4a7c59",
-          fire: "#d4483b",
-          earth: "#c9a96e",
-          metal: "#e8e8e8",
-          water: "#2c5f7c",
+          wood: "#4ade80",
+          fire: "#f87171",
+          earth: "#fbbf24",
+          metal: "#e2e8f0",
+          water: "#60a5fa",
         },
       },
       fontFamily: {
@@ -31,29 +45,38 @@ const config: Config = {
         sans: ["var(--font-noto-sans-kr)", "sans-serif"],
       },
       animation: {
+        "fade-in": "fadeIn 0.5s ease-out",
+        "slide-up": "slideUp 0.5s ease-out",
+        "shimmer": "shimmer 2s infinite",
         float: "float 6s ease-in-out infinite",
         "pulse-gold": "pulseGold 2s ease-in-out infinite",
         "spin-slow": "spin 20s linear infinite",
-        "fade-in": "fadeIn 0.5s ease-out",
-        "slide-up": "slideUp 0.6s ease-out",
       },
       keyframes: {
-        float: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-10px)" },
-        },
-        pulseGold: {
-          "0%, 100%": { boxShadow: "0 0 20px rgba(201, 169, 110, 0.2)" },
-          "50%": { boxShadow: "0 0 40px rgba(201, 169, 110, 0.5)" },
-        },
         fadeIn: {
           "0%": { opacity: "0" },
           "100%": { opacity: "1" },
         },
         slideUp: {
-          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "0%": { opacity: "0", transform: "translateY(12px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
+        float: {
+          "0%, 100%": { transform: "translateY(0px)" },
+          "50%": { transform: "translateY(-8px)" },
+        },
+        pulseGold: {
+          "0%, 100%": { boxShadow: "0 0 20px rgba(212, 197, 160, 0.15)" },
+          "50%": { boxShadow: "0 0 40px rgba(212, 197, 160, 0.3)" },
+        },
+      },
+      backgroundImage: {
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-accent": "linear-gradient(135deg, #d4c5a0 0%, #b8a882 100%)",
       },
     },
   },

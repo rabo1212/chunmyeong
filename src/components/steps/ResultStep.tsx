@@ -4,21 +4,24 @@ import { motion } from "framer-motion";
 import SajuChart from "@/components/ui/SajuChart";
 import OhengChart from "@/components/ui/OhengChart";
 import SinsalSection from "@/components/ui/SinsalSection";
+import SectionCard from "@/components/sections/SectionCard";
 import ResultCard from "@/components/ResultCard";
 import ShareButtons from "@/components/ShareButtons";
 import CoupangBanner from "@/components/CoupangBanner";
 import PremiumUpsell from "@/components/premium/PremiumUpsell";
 import ZiweiPalaceCards from "@/components/premium/ZiweiPalaceCards";
 import MonthlyTimeline from "@/components/premium/MonthlyTimeline";
-import FaceDetailAnalysis from "@/components/premium/FaceDetailAnalysis";
 import DaeunDetailSection from "@/components/premium/DaeunDetailSection";
 import YongshinSection from "@/components/premium/YongshinSection";
 import PdfDownloadButton from "@/components/premium/PdfDownloadButton";
 import { parseMarkdown } from "@/lib/parse-markdown";
-import type { AnalysisResult, PremiumData } from "@/lib/types";
+import type { NewAnalysisResult, PremiumData, SajuSection } from "@/lib/types";
+
+// 무료로 공개할 섹션 수
+const FREE_SECTION_COUNT = 2;
 
 interface ResultStepProps {
-  result: AnalysisResult;
+  result: NewAnalysisResult;
   name?: string;
   onRestart: () => void;
   premiumData?: PremiumData | null;
@@ -32,30 +35,31 @@ export default function ResultStep({
   premiumData,
   onPaymentReady,
 }: ResultStepProps) {
-  const { saju, interpretation } = result;
+  const { saju, sections, interpretation } = result;
   const isPremium = !!premiumData;
+  const hasSections = sections && sections.length > 0;
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       id={isPremium ? "premium-result-container" : undefined}
-      className="px-4 py-6 space-y-6 no-scrollbar"
+      className="px-4 py-8 space-y-8 no-scrollbar"
     >
       {/* 타이틀 */}
-      <div className="text-center">
+      <div className="text-center py-4">
         {isPremium && (
-          <span className="inline-block px-3 py-1 bg-cm-gold/20 border border-cm-gold/40 rounded-full text-xs text-cm-gold mb-2">
-            PREMIUM
+          <span className="inline-block px-4 py-1.5 border border-cm-accent/20 text-[10px] uppercase tracking-[0.3em] text-cm-accent mb-3">
+            Premium
           </span>
         )}
-        <h2 className="font-serif text-2xl text-cm-gold glow-gold">
+        <h2 className="font-serif text-3xl font-normal text-cm-text">
           {name ? `${name}님의 천명` : "당신의 천명"}
         </h2>
-        <p className="text-sm text-cm-beige/50 mt-1">
+        <p className="text-[11px] uppercase tracking-[0.15em] text-cm-muted mt-3">
           {isPremium
-            ? "사주팔자 × 자미두수 × AI 관상 통합 분석"
-            : "사주팔자 × AI 관상 통합 분석"}
+            ? "Saju &middot; Ziwei &middot; Deep Analysis"
+            : "Saju &middot; AI Analysis"}
         </p>
       </div>
 
@@ -83,21 +87,21 @@ export default function ResultStep({
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="card p-4"
+          className="py-6 border-b border-cm-dim/10"
         >
-          <h3 className="font-serif text-lg text-cm-gold text-center mb-3">
-            大運 대운 흐름
+          <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted text-center mb-4">
+            대운 흐름
           </h3>
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
             {saju.daeun.map((dw, i) => (
               <div
                 key={i}
-                className="flex-shrink-0 flex flex-col items-center gap-1 px-2 py-2 bg-cm-navy/60 border border-cm-gold/10 rounded-lg min-w-[56px]"
+                className="flex-shrink-0 flex flex-col items-center gap-1 px-3 py-2.5 border border-cm-dim/10 min-w-[56px]"
               >
-                <span className="font-serif text-sm text-cm-ivory">
+                <span className="font-serif text-sm text-cm-text">
                   {dw.ganzi}
                 </span>
-                <span className="text-[10px] text-cm-beige/50">{dw.age}세~</span>
+                <span className="text-[10px] text-cm-dim">{dw.age}세~</span>
               </div>
             ))}
           </div>
@@ -113,46 +117,83 @@ export default function ResultStep({
         <SinsalSection pillars={saju.pillars} specialSinsal={saju.specialSinsal} />
       </motion.div>
 
-      {/* AI 해석 */}
-      <motion.div
-        initial={{ y: 20, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="card p-5"
-      >
-        <h3 className="font-serif text-lg text-cm-gold text-center mb-4">
-          AI 종합 해석
-        </h3>
-        <div
-          className="text-sm leading-relaxed text-cm-beige/80 space-y-1"
-          dangerouslySetInnerHTML={{ __html: parseMarkdown(interpretation) }}
-        />
-      </motion.div>
+      {/* === 12섹션 카드 === */}
+      {hasSections ? (
+        <div>
+          <div className="text-center py-6 border-t border-cm-dim/10">
+            <h3 className="font-serif text-xl font-normal text-cm-text">
+              사주 해설
+            </h3>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-cm-dim mt-2">
+              12 Sections Deep Analysis
+            </p>
+          </div>
+
+          {sections.map((section: SajuSection, index: number) => (
+            <SectionCard
+              key={section.sectionKey}
+              section={section}
+              locked={!isPremium && index >= FREE_SECTION_COUNT}
+              delay={0.7 + index * 0.05}
+            />
+          ))}
+
+          {/* 프리미엄 잠금 안내 (무료 사용자) */}
+          {!isPremium && sections.length > FREE_SECTION_COUNT && (
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 1.2 }}
+              className="text-center py-6"
+            >
+              <p className="text-[11px] text-cm-dim">
+                + {sections.length - FREE_SECTION_COUNT}개 섹션 더 보기
+              </p>
+            </motion.div>
+          )}
+        </div>
+      ) : (
+        /* 레거시 폴백: 기존 마크다운 해석 */
+        interpretation && (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            className="py-6 border-t border-cm-dim/10"
+          >
+            <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted text-center mb-6">
+              AI 종합 해석
+            </h3>
+            <div
+              className="text-[13px] leading-[1.9] text-cm-muted"
+              dangerouslySetInnerHTML={{ __html: parseMarkdown(interpretation) }}
+            />
+          </motion.div>
+        )
+      )}
 
       {/* === 프리미엄 섹션 === */}
       {isPremium && premiumData ? (
         <>
-          <div className="border-t border-cm-gold/20 pt-6">
-            <h3 className="font-serif text-center text-cm-gold text-lg mb-6 glow-gold">
-              프리미엄 심층 분석
-            </h3>
+          <div className="pt-8">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="flex-1 h-[1px] bg-cm-accent/15" />
+              <h3 className="text-[10px] uppercase tracking-[0.3em] text-cm-accent">
+                Premium Analysis
+              </h3>
+              <div className="flex-1 h-[1px] bg-cm-accent/15" />
+            </div>
           </div>
 
-          {premiumData.ziwei12 && (
+          {premiumData.ziwei12 && premiumData.ziwei12.length > 0 && (
             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.9 }}>
               <ZiweiPalaceCards palaces={premiumData.ziwei12} />
             </motion.div>
           )}
 
-          {premiumData.monthlyFortune && (
+          {premiumData.monthlyFortune && premiumData.monthlyFortune.length > 0 && (
             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.0 }}>
               <MonthlyTimeline fortunes={premiumData.monthlyFortune} />
-            </motion.div>
-          )}
-
-          {premiumData.faceAreas && (
-            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.1 }}>
-              <FaceDetailAnalysis areas={premiumData.faceAreas} />
             </motion.div>
           )}
 
@@ -189,9 +230,9 @@ export default function ResultStep({
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: isPremium ? 1.5 : 1.0 }}
+        transition={{ delay: isPremium ? 1.5 : 1.3 }}
       >
-        <h3 className="text-sm text-cm-beige/60 text-center mb-3">결과 공유하기</h3>
+        <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-dim text-center mb-4">Share</h3>
         <ShareButtons />
       </motion.div>
 
@@ -203,12 +244,12 @@ export default function ResultStep({
       )}
 
       {/* 면책 */}
-      <p className="text-[10px] text-cm-beige/30 text-center leading-relaxed">
-        본 서비스는 엔터테인먼트 목적이며, 관상학·사주학적 해석은 과학적 근거에 기반하지 않습니다.
+      <p className="text-[10px] uppercase tracking-[0.1em] text-cm-dim/60 text-center leading-relaxed">
+        본 서비스는 엔터테인먼트 목적이며, 사주학적 해석은 과학적 근거에 기반하지 않습니다.
       </p>
 
       {/* 다시 하기 */}
-      <div className="text-center pt-4 pb-8">
+      <div className="text-center pt-4 pb-10">
         <button onClick={onRestart} className="btn-secondary">
           다시 분석하기
         </button>

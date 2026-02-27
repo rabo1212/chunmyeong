@@ -1,67 +1,38 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "개인정보처리방침 - 천명(天命)",
+  title: "개인정보처리방침 - 천명",
 };
 
 export default function PrivacyPage() {
   return (
-    <main className="flex-1 px-4 py-8 max-w-lg mx-auto">
-      <Link href="/" className="text-cm-gold text-sm hover:underline">
+    <main className="flex-1 px-4 py-10 max-w-lg mx-auto">
+      <Link href="/" className="text-[11px] uppercase tracking-[0.15em] text-cm-accent hover:text-cm-accent-soft transition-colors">
         &larr; 돌아가기
       </Link>
 
-      <h1 className="font-serif text-2xl text-cm-gold mt-6 mb-6">
+      <h1 className="font-serif text-2xl font-normal text-cm-text mt-8 mb-8">
         개인정보처리방침
       </h1>
 
-      <div className="space-y-6 text-sm text-cm-beige/80 leading-relaxed">
+      <div className="space-y-8 text-[13px] text-cm-muted leading-[1.9]">
         <section>
-          <h2 className="text-base text-cm-ivory font-bold mb-2">
-            1. 수집하는 정보
+          <h2 className="text-[10px] uppercase tracking-[0.2em] text-cm-text mb-3">
+            01 — 수집하는 정보
           </h2>
           <ul className="list-disc ml-4 space-y-1">
             <li>
               <strong>필수:</strong> 생년월일, 태어난 시간, 성별 (사주 분석 목적)
             </li>
             <li>
-              <strong>선택:</strong> 얼굴 사진 (관상 분석 목적)
-            </li>
-            <li>
-              <strong>미수집:</strong> 이메일, 전화번호, 주소 등 개인 식별 정보
+              <strong>미수집:</strong> 이메일, 전화번호, 주소, 사진 등 개인 식별 정보
             </li>
           </ul>
         </section>
 
         <section>
-          <h2 className="text-base text-cm-ivory font-bold mb-2">
-            2. 사진 처리 방식
-          </h2>
-          <div className="card p-4 space-y-2">
-            <p>
-              &#128274; 업로드된 사진은 다음과 같이 처리됩니다:
-            </p>
-            <ol className="list-decimal ml-4 space-y-1">
-              <li>브라우저에서 이미지를 메모리상 데이터로 변환</li>
-              <li>암호화된 HTTPS 연결로 분석 서버에 전송</li>
-              <li>AI 분석 API 호출 (텍스트 해석 생성)</li>
-              <li>
-                <strong className="text-cm-gold">
-                  분석 완료 즉시 이미지 데이터 삭제
-                </strong>
-              </li>
-              <li>텍스트 결과만 사용자에게 반환</li>
-            </ol>
-            <p className="text-cm-gold/80 font-bold mt-2">
-              전 과정에서 이미지가 디스크, 데이터베이스, 클라우드 스토리지에
-              저장되는 순간은 없습니다.
-            </p>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-base text-cm-ivory font-bold mb-2">
-            3. 분석 결과 보관
+          <h2 className="text-[10px] uppercase tracking-[0.2em] text-cm-text mb-3">
+            02 — 분석 결과 보관
           </h2>
           <p>
             분석 결과 텍스트는 사용자의 브라우저 세션에서만 존재하며,
@@ -71,18 +42,18 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-base text-cm-ivory font-bold mb-2">
-            4. 제3자 제공
+          <h2 className="text-[10px] uppercase tracking-[0.2em] text-cm-text mb-3">
+            03 — 제3자 제공
           </h2>
           <ul className="list-disc ml-4 space-y-1">
             <li>
-              AI 분석을 위해 Anthropic Claude API에 사진과 사주 데이터를
+              AI 분석을 위해 Anthropic Claude API에 사주 데이터를
               일시적으로 전달합니다. Anthropic의{" "}
               <a
                 href="https://www.anthropic.com/privacy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-cm-gold hover:underline"
+                className="text-cm-accent hover:text-cm-accent-soft transition-colors"
               >
                 개인정보 정책
               </a>
@@ -95,19 +66,19 @@ export default function PrivacyPage() {
         </section>
 
         <section>
-          <h2 className="text-base text-cm-ivory font-bold mb-2">
-            5. 면책사항
+          <h2 className="text-[10px] uppercase tracking-[0.2em] text-cm-text mb-3">
+            04 — 면책사항
           </h2>
-          <p className="card p-3 text-cm-beige/60">
+          <p className="py-3 border-t border-cm-dim/10 text-cm-dim">
             본 서비스는 엔터테인먼트 목적으로 제공됩니다.
-            사주학·관상학적 해석은 과학적 근거에 기반하지 않으며,
+            사주학적 해석은 과학적 근거에 기반하지 않으며,
             의료, 법률, 재정적 조언을 대체하지 않습니다.
           </p>
         </section>
 
         <section>
-          <h2 className="text-base text-cm-ivory font-bold mb-2">
-            6. 문의
+          <h2 className="text-[10px] uppercase tracking-[0.2em] text-cm-text mb-3">
+            05 — 문의
           </h2>
           <p>
             개인정보 관련 문의사항이 있으시면 서비스 내 문의 기능을
@@ -116,7 +87,7 @@ export default function PrivacyPage() {
         </section>
       </div>
 
-      <p className="text-xs text-cm-beige/30 mt-8 text-center">
+      <p className="text-[10px] uppercase tracking-[0.1em] text-cm-dim mt-10 text-center">
         최종 업데이트: 2026년 2월
       </p>
     </main>

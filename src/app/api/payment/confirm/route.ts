@@ -70,7 +70,6 @@ export async function POST(request: NextRequest) {
       ziweiSummary: string;
       liunianData: LiunianData;
       daxianList: DaxianItem[];
-      hasFacePhoto: boolean;
     }>(`pending:${orderId}`);
 
     if (!pendingData) {
@@ -88,7 +87,6 @@ export async function POST(request: NextRequest) {
       ziweiSummary: pendingData.ziweiSummary,
       liunianData: pendingData.liunianData,
       daxianList: pendingData.daxianList,
-      hasFacePhoto: pendingData.hasFacePhoto,
     });
 
     // 4. 결과 저장 (30일 TTL)

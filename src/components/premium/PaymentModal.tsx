@@ -8,7 +8,6 @@ interface Props {
 
 export default function PaymentModal({ onClose }: Props) {
   const paymentRef = useRef<HTMLDivElement>(null);
-  // [FIX] CRITICAL 7: 위젯 인스턴스를 useRef로 공유
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const widgetRef = useRef<any>(null);
   const [error, setError] = useState("");
@@ -50,7 +49,6 @@ export default function PaymentModal({ onClose }: Props) {
     initPayment();
   }, []);
 
-  // [FIX] WARNING: ESC 키로 모달 닫기
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -67,7 +65,6 @@ export default function PaymentModal({ onClose }: Props) {
         return;
       }
 
-      // [FIX] CRITICAL 7: useRef의 위젯 인스턴스 재사용
       if (!widgetRef.current) {
         setError("결제 모듈이 준비되지 않았습니다.");
         return;
@@ -91,18 +88,20 @@ export default function PaymentModal({ onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-black/60"
+      className="fixed inset-0 z-50 flex items-end justify-center bg-black/70"
       role="dialog"
       aria-modal="true"
       aria-labelledby="payment-title"
     >
-      <div className="w-full max-w-lg bg-cm-deep border-t border-cm-gold/20 rounded-t-2xl p-5 animate-slideUp">
+      <div className="w-full max-w-lg bg-cm-card p-6 animate-slideUp"
+        style={{ borderTop: "1px solid rgba(74, 71, 68, 0.2)" }}
+      >
         {/* 헤더 */}
-        <div className="flex items-center justify-between mb-4">
-          <h3 id="payment-title" className="font-serif text-lg text-cm-gold">프리미엄 결제</h3>
+        <div className="flex items-center justify-between mb-5">
+          <h3 id="payment-title" className="font-serif text-lg text-cm-text font-normal">프리미엄 결제</h3>
           <button
             onClick={onClose}
-            className="text-cm-beige/40 hover:text-cm-beige text-xl"
+            className="text-cm-dim hover:text-cm-muted text-lg"
             aria-label="닫기"
           >
             ✕
@@ -112,13 +111,13 @@ export default function PaymentModal({ onClose }: Props) {
         {/* 결제 위젯 영역 */}
         {loading && (
           <div className="h-40 flex items-center justify-center">
-            <p className="text-sm text-cm-beige/50">결제 수단 로딩 중...</p>
+            <p className="text-[12px] text-cm-muted">결제 수단 로딩 중...</p>
           </div>
         )}
 
         {error && (
-          <div className="p-3 bg-cm-red/10 border border-cm-red/30 rounded-lg mb-4">
-            <p className="text-sm text-cm-red text-center">{error}</p>
+          <div className="p-3 border border-cm-red/30 mb-4">
+            <p className="text-[12px] text-cm-red text-center">{error}</p>
           </div>
         )}
 
@@ -128,14 +127,14 @@ export default function PaymentModal({ onClose }: Props) {
         {!loading && !error && (
           <button
             onClick={handlePayment}
-            className="w-full py-3.5 bg-gradient-to-r from-cm-gold to-yellow-600 text-cm-navy font-bold rounded-lg text-base active:scale-[0.98]"
+            className="w-full btn-primary"
           >
             ₩1,900 결제하기
           </button>
         )}
 
         {/* 안내 */}
-        <p className="text-[10px] text-cm-beige/30 text-center mt-3">
+        <p className="text-[10px] text-cm-dim text-center mt-3 tracking-[0.05em]">
           결과 열람 전 전액 환불 가능 · 열람 후 환불 불가
         </p>
       </div>

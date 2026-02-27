@@ -2,8 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { computeSaju } from "@/lib/saju";
 import { computeZiwei, computeLiunian, computeDaxianList } from "@/lib/ziwei";
-import { SAJU_SYSTEM_PROMPT, buildAnalysisPrompt } from "@/lib/prompts";
-import type { BirthInfo } from "@/lib/types";
+import {
+  SAJU_SYSTEM_PROMPT,
+  buildSections1to6Prompt,
+  buildSections7to12Prompt,
+  buildAnalysisPrompt,
+  SAJU_SYSTEM_PROMPT_LEGACY,
+} from "@/lib/prompts";
+import type { BirthInfo, SajuSection } from "@/lib/types";
 
 export const maxDuration = 60;
 
@@ -22,6 +28,24 @@ function checkRateLimit(ip: string): boolean {
   return true;
 }
 
+// JSON 파싱 헬퍼 (```json 블록 + {} 추출)
+function parseJSON<T>(text: string): T {
+  let cleaned = text.trim();
+  const codeBlockMatch = cleaned.match(/```(?:json)?\s*\n?([\s\S]*?)\n?```/);
+  if (codeBlockMatch) {
+    cleaned = codeBlockMatch[1].trim();
+  }
+  try {
+    return JSON.parse(cleaned);
+  } catch {
+    const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      return JSON.parse(jsonMatch[0]);
+    }
+    throw new Error("JSON 파싱 실패");
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     // Rate limit
@@ -35,7 +59,6 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const birthInfo: BirthInfo = body.birthInfo;
-    let selfieBase64: string | null = body.selfieBase64 ?? null;
 
     // 1. 사주 계산
     const saju = computeSaju(birthInfo);
@@ -46,54 +69,75 @@ export async function POST(request: NextRequest) {
     const liunianData = computeLiunian(birthInfo, currentYear);
     const daxianList = computeDaxianList(birthInfo);
 
-    // 2. Claude API 호출
-    const anthropic = new Anthropic({
-      apiKey: process.env.ANTHROPIC_API_KEY!,
-    });
+    // 2. Claude API 호출 — 12섹션 2회 분할 병렬
+    const apiKey = process.env.ANTHROPIC_API_KEY;
+    if (!apiKey) throw new Error("ANTHROPIC_API_KEY 환경변수 없음");
+    const anthropic = new Anthropic({ apiKey });
 
-    const hasFace = !!selfieBase64;
-    const promptText = buildAnalysisPrompt(saju.summary, hasFace);
+    const prompt1 = buildSections1to6Prompt(saju.summary, birthInfo.name);
+    const prompt2 = buildSections7to12Prompt(saju.summary, birthInfo.name, currentYear);
 
-    type ContentBlock =
-      | { type: "image"; source: { type: "base64"; media_type: "image/jpeg"; data: string } }
-      | { type: "text"; text: string };
-
-    const content: ContentBlock[] = [];
-
-    if (selfieBase64) {
-      // base64 prefix 제거
-      const base64Data = selfieBase64.replace(/^data:image\/\w+;base64,/, "");
-      content.push({
-        type: "image",
-        source: {
-          type: "base64",
-          media_type: "image/jpeg",
-          data: base64Data,
-        },
+    const callClaude = async (prompt: string, system: string): Promise<string> => {
+      const response = await anthropic.messages.create({
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 4000,
+        temperature: 0.7,
+        system,
+        messages: [{ role: "user", content: prompt }],
       });
-      // 즉시 참조 해제 (GC 대상)
-      selfieBase64 = null;
+
+      return response.content[0].type === "text" ? response.content[0].text : "";
+    };
+
+    // 2개 병렬 호출: 섹션1~6, 섹션7~12
+    const results = await Promise.allSettled([
+      callClaude(prompt1, SAJU_SYSTEM_PROMPT),
+      callClaude(prompt2, SAJU_SYSTEM_PROMPT),
+    ]);
+
+    // 12섹션 파싱
+    const sections: SajuSection[] = [];
+
+    if (results[0].status === "fulfilled") {
+      try {
+        const data = parseJSON<{ sections: SajuSection[] }>(results[0].value);
+        sections.push(...(data.sections || []));
+      } catch (e) {
+        console.error("섹션 1~6 파싱 실패:", e);
+      }
+    } else {
+      console.error("섹션 1~6 호출 실패:", results[0].reason);
     }
 
-    content.push({ type: "text", text: promptText });
+    if (results[1].status === "fulfilled") {
+      try {
+        const data = parseJSON<{ sections: SajuSection[] }>(results[1].value);
+        sections.push(...(data.sections || []));
+      } catch (e) {
+        console.error("섹션 7~12 파싱 실패:", e);
+      }
+    } else {
+      console.error("섹션 7~12 호출 실패:", results[1].reason);
+    }
 
-    const response = await anthropic.messages.create({
-      model: "claude-3-haiku-20240307",
-      max_tokens: 4000,
-      temperature: 0.7,
-      system: SAJU_SYSTEM_PROMPT,
-      messages: [{ role: "user", content }],
-    });
+    // sectionNumber 기준 정렬
+    sections.sort((a, b) => a.sectionNumber - b.sectionNumber);
 
-    const interpretation =
-      response.content[0].type === "text" ? response.content[0].text : "";
+    // 섹션이 없는 경우 폴백: 레거시 단일 호출
+    let interpretation = "";
+    if (sections.length === 0) {
+      console.warn("12섹션 생성 실패, 레거시 폴백");
+      const legacyPrompt = buildAnalysisPrompt(saju.summary, currentYear);
+      const fallback = await callClaude(legacyPrompt, SAJU_SYSTEM_PROMPT_LEGACY);
+      interpretation = fallback;
+    }
 
     return NextResponse.json({
       saju: {
         ...saju,
-        // [FIX] CRITICAL 8: birthInfo 포함 (프리미엄 birthYear 계산용)
         birthInfo: { year: birthInfo.year, month: birthInfo.month, day: birthInfo.day },
       },
+      sections,
       interpretation,
       // 프리미엄용 데이터
       ziweiSummary: ziweiResult?.summary ?? null,

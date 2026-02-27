@@ -28,37 +28,37 @@ export default function SinsalSection({ pillars, specialSinsal }: SinsalSectionP
     .filter(Boolean) as { pillar: string; hanja: string; name: string; emoji: string; desc: string }[];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* 특수 신살 (천을귀인, 도화살 등) */}
       {specialSinsal.length > 0 && (
         <div>
-          <h3 className="font-serif text-lg text-cm-gold mb-3">특수 신살</h3>
-          <div className="space-y-2">
+          <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted mb-4">특수 신살</h3>
+          <div className="space-y-0">
             {specialSinsal.map((s) => (
               <div
                 key={s.hanja}
-                className="card p-3"
+                className="py-4 border-b border-cm-dim/10"
               >
-                <div className="flex items-start gap-2">
-                  <span className="text-xl mt-0.5">{s.emoji}</span>
+                <div className="flex items-start gap-3">
+                  <span className="text-lg mt-0.5">{s.emoji}</span>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className="font-serif font-bold text-cm-ivory">
+                      <span className="text-[13px] text-cm-text">
                         {s.name}
                       </span>
-                      <span className="text-xs text-cm-beige/40">{s.hanja}</span>
+                      <span className="text-[11px] text-cm-dim">{s.hanja}</span>
                       <div className="flex gap-1">
                         {s.positions.map((pos) => (
                           <span
                             key={pos}
-                            className="text-[10px] px-1.5 py-0.5 rounded bg-cm-gold/20 text-cm-gold"
+                            className="text-[10px] px-1.5 py-0.5 border border-cm-accent/15 text-cm-accent/70"
                           >
                             {pos}
                           </span>
                         ))}
                       </div>
                     </div>
-                    <p className="text-xs text-cm-beige/60 mt-1 leading-relaxed">
+                    <p className="text-[12px] text-cm-muted mt-1.5 leading-relaxed">
                       {s.desc}
                     </p>
                   </div>
@@ -71,23 +71,23 @@ export default function SinsalSection({ pillars, specialSinsal }: SinsalSectionP
 
       {/* 12신살 */}
       <div>
-        <h3 className="font-serif text-lg text-cm-gold mb-3">12신살</h3>
-        <div className="grid grid-cols-1 gap-2">
+        <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted mb-4">12신살</h3>
+        <div className="space-y-0">
           {sinsal12.map((s) => (
             <div
               key={s.pillar}
-              className="card p-3 flex items-start gap-2"
+              className="py-3 border-b border-cm-dim/10 flex items-start gap-3"
             >
               <span className="text-lg">{s.emoji}</span>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-cm-gold/70 font-bold">{s.pillar}</span>
-                  <span className="text-sm font-serif text-cm-ivory">
+                  <span className="text-[10px] text-cm-accent/70 tracking-[0.1em]">{s.pillar}</span>
+                  <span className="text-[13px] text-cm-text">
                     {s.name}
                   </span>
-                  <span className="text-xs text-cm-beige/40">{s.hanja}</span>
+                  <span className="text-[11px] text-cm-dim">{s.hanja}</span>
                 </div>
-                <p className="text-xs text-cm-beige/50 mt-0.5 leading-relaxed">
+                <p className="text-[12px] text-cm-muted mt-0.5 leading-relaxed">
                   {s.desc}
                 </p>
               </div>
@@ -97,7 +97,7 @@ export default function SinsalSection({ pillars, specialSinsal }: SinsalSectionP
       </div>
 
       {specialSinsal.length === 0 && (
-        <p className="text-xs text-cm-beige/40 text-center">
+        <p className="text-[11px] text-cm-dim text-center">
           특수 신살이 발견되지 않았습니다
         </p>
       )}

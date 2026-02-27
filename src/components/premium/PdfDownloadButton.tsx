@@ -18,7 +18,7 @@ export default function PdfDownloadButton() {
       }
 
       const canvas = await html2canvas(el, {
-        backgroundColor: "#1a1a2e",
+        backgroundColor: "#08080f",
         scale: 2,
         useCORS: true,
         logging: false,

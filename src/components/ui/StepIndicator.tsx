@@ -10,31 +10,22 @@ export default function StepIndicator({
   totalSteps = 5,
 }: StepIndicatorProps) {
   return (
-    <div className="flex items-center justify-center gap-2 py-4 px-4">
+    <div className="flex items-center justify-center gap-1 py-5 px-4">
       {Array.from({ length: totalSteps }, (_, i) => {
         const step = i + 1;
         const isActive = step === currentStep;
         const isCompleted = step < currentStep;
         return (
-          <div key={step} className="flex items-center gap-2">
+          <div key={step} className="flex items-center gap-1">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
+              className={`h-[1px] transition-all duration-500 ${
                 isActive
-                  ? "bg-cm-gold text-cm-navy scale-110"
+                  ? "w-8 bg-cm-accent"
                   : isCompleted
-                    ? "bg-cm-gold/30 text-cm-gold"
-                    : "bg-cm-deep border border-cm-gold/20 text-cm-beige/40"
+                    ? "w-6 bg-cm-accent/40"
+                    : "w-6 bg-cm-dim/20"
               }`}
-            >
-              {isCompleted ? "✓" : step}
-            </div>
-            {step < totalSteps && (
-              <div
-                className={`w-6 h-0.5 transition-colors duration-300 ${
-                  isCompleted ? "bg-cm-gold/40" : "bg-cm-gold/10"
-                }`}
-              />
-            )}
+            />
           </div>
         );
       })}

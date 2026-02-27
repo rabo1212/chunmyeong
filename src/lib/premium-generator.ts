@@ -3,7 +3,7 @@ import {
   PREMIUM_SYSTEM_PROMPT,
   buildZiweiYongshinPrompt,
   buildMonthlyFortunePrompt,
-  buildFaceDaeunPrompt,
+  buildDaeunDetailPrompt,
   buildDaeunSummary,
 } from "./premium-prompts";
 import { buildLiunianSummary } from "./ziwei";
@@ -14,7 +14,6 @@ import type {
   PremiumData,
   ZiweiPalaceAnalysis,
   MonthlyFortune,
-  FaceAreaAnalysis,
   DaeunDetail,
   YongshinInfo,
 } from "./types";
@@ -25,8 +24,6 @@ interface PremiumInput {
   ziweiSummary: string;
   liunianData: LiunianData;
   daxianList: DaxianItem[];
-  hasFacePhoto: boolean;
-  selfieBase64?: string | null;
 }
 
 // [FIX] WARNING: JSON 파싱 개선 — 더 범용적인 블록 추출
@@ -55,31 +52,15 @@ function parseJSON<T>(text: string): T {
 async function callClaude(
   anthropic: Anthropic,
   prompt: string,
-  selfieBase64?: string | null
 ): Promise<string> {
-  type ContentBlock =
-    | { type: "image"; source: { type: "base64"; media_type: "image/jpeg"; data: string } }
-    | { type: "text"; text: string };
-
-  const content: ContentBlock[] = [];
-
-  if (selfieBase64) {
-    const base64Data = selfieBase64.replace(/^data:image\/\w+;base64,/, "");
-    content.push({
-      type: "image",
-      source: { type: "base64", media_type: "image/jpeg", data: base64Data },
-    });
-  }
-  content.push({ type: "text", text: prompt });
-
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
       const response = await anthropic.messages.create({
-        model: "claude-3-haiku-20240307",
+        model: "claude-3-5-sonnet-20241022",
         max_tokens: 4000,
         temperature: 0.7,
         system: PREMIUM_SYSTEM_PROMPT,
-        messages: [{ role: "user", content }],
+        messages: [{ role: "user", content: prompt }],
       });
 
       const text = response.content[0].type === "text" ? response.content[0].text : "";
@@ -113,25 +94,23 @@ export async function generatePremiumContent(input: PremiumInput): Promise<Premi
   // 프롬프트 3종 구성
   const prompt1 = buildZiweiYongshinPrompt(input.ziweiSummary, input.saju.summary);
   const prompt2 = buildMonthlyFortunePrompt(liunianSummary, input.saju.summary, targetYear);
-  const prompt3 = buildFaceDaeunPrompt(
+  const prompt3 = buildDaeunDetailPrompt(
     input.saju.summary,
     input.interpretation,
     daeunSummary,
-    input.hasFacePhoto
   );
 
-  // [FIX] CRITICAL 9: Promise.allSettled — 부분 실패 허용
+  // Promise.allSettled — 부분 실패 허용
   const results = await Promise.allSettled([
     callClaude(anthropic, prompt1),
     callClaude(anthropic, prompt2),
-    callClaude(anthropic, prompt3, input.hasFacePhoto ? input.selfieBase64 : null),
+    callClaude(anthropic, prompt3),
   ]);
 
   // 결과 파싱 (실패 시 기본값)
   let ziwei12: ZiweiPalaceAnalysis[] = [];
   let yongshin: YongshinInfo = { element: "미확인", elementEmoji: "", color: "-", direction: "-", number: "-", gemstone: "-", food: "-", career: "-", analysis: "분석 중 오류가 발생했습니다." };
   let monthlyFortune: MonthlyFortune[] = [];
-  let faceAreas: FaceAreaAnalysis[] = [];
   let daeunDetail: DaeunDetail = {
     current: { ganzi: "-", ageRange: "-", title: "분석 실패", analysis: "프리미엄 분석 중 오류가 발생했습니다." },
     previous: null,
@@ -164,15 +143,14 @@ export async function generatePremiumContent(input: PremiumInput): Promise<Premi
 
   if (results[2].status === "fulfilled") {
     try {
-      const data3 = parseJSON<{ faceAreas: FaceAreaAnalysis[]; daeunDetail: DaeunDetail }>(results[2].value);
-      faceAreas = data3.faceAreas || [];
+      const data3 = parseJSON<{ daeunDetail: DaeunDetail }>(results[2].value);
       daeunDetail = data3.daeunDetail || daeunDetail;
     } catch (e) {
-      console.error("Premium parse error (face/daeun):", e);
+      console.error("Premium parse error (daeun):", e);
     }
   } else {
     console.error("Premium call 3 failed:", results[2].reason);
   }
 
-  return { ziwei12, monthlyFortune, faceAreas, daeunDetail, yongshin };
+  return { ziwei12, monthlyFortune, daeunDetail, yongshin };
 }

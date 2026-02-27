@@ -7,7 +7,7 @@ export const maxDuration = 30;
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { saju, interpretation, ziweiSummary, liunianData, daxianList, hasFacePhoto } = body;
+    const { saju, interpretation, ziweiSummary, liunianData, daxianList } = body;
 
     if (!saju || !interpretation) {
       return NextResponse.json({ error: "분석 데이터가 필요합니다." }, { status: 400 });
@@ -25,7 +25,6 @@ export async function POST(request: NextRequest) {
         ziweiSummary,
         liunianData,
         daxianList,
-        hasFacePhoto: !!hasFacePhoto,
         createdAt: new Date().toISOString(),
       },
       { ex: 1800 } // 30분

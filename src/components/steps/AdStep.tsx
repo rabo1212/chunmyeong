@@ -23,7 +23,6 @@ function KakaoAdFit() {
     ins.setAttribute("data-ad-height", "100");
     containerRef.current.appendChild(ins);
 
-    // AdFit SDK 로드 후 광고 렌더링
     const script = document.createElement("script");
     script.src = "//t1.daumcdn.net/kas/static/ba.min.js";
     script.async = true;
@@ -57,9 +56,9 @@ export default function AdStep({ onNext }: AdStepProps) {
       exit={{ opacity: 0 }}
       className="flex flex-col items-center justify-center min-h-[70dvh] px-6 text-center"
     >
-      <div className="mb-6">
-        <p className="text-cm-gold font-serif text-xl mb-2">분석이 완료되었습니다!</p>
-        <p className="text-cm-beige/60 text-sm">
+      <div className="mb-8">
+        <p className="font-serif text-xl text-cm-text mb-3">분석이 완료되었습니다</p>
+        <p className="text-[12px] text-cm-muted">
           잠시 후 결과를 확인할 수 있습니다
         </p>
       </div>
@@ -69,7 +68,7 @@ export default function AdStep({ onNext }: AdStepProps) {
         <KakaoAdFit />
       </div>
 
-      <p className="text-xs text-cm-beige/30 mb-4">
+      <p className="text-[10px] uppercase tracking-[0.15em] text-cm-dim mb-6">
         광고 수익은 AI 분석 비용에 사용됩니다
       </p>
 
@@ -77,7 +76,7 @@ export default function AdStep({ onNext }: AdStepProps) {
         onClick={onNext}
         disabled={countdown > 0}
         className={`btn-primary px-10 transition-all ${
-          countdown > 0 ? "opacity-50 cursor-not-allowed" : "animate-pulse-gold"
+          countdown > 0 ? "opacity-50 cursor-not-allowed" : ""
         }`}
       >
         {countdown > 0 ? `결과 확인 (${countdown}초)` : "결과 확인하기"}

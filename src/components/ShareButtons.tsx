@@ -35,7 +35,7 @@ export default function ShareButtons({
     try {
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(el, {
-        backgroundColor: "#1a1a2e",
+        backgroundColor: "#08080f",
         scale: 2,
         useCORS: true,
       });
