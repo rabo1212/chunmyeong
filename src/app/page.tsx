@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { Suspense, useState, useCallback, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { AnimatePresence } from "framer-motion";
 import StepIndicator from "@/components/ui/StepIndicator";
 import StartScreen from "@/components/steps/StartScreen";
@@ -21,11 +22,52 @@ const STEP_NUMBER: Record<Step, number> = {
 };
 
 export default function Home() {
+  return (
+    <Suspense fallback={<div className="flex-1" />}>
+      <HomeContent />
+    </Suspense>
+  );
+}
+
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const isDevMode = searchParams.get("dev") === "1";
+
   const [step, setStep] = useState<Step>("start");
   const [birthInfo, setBirthInfo] = useState<BirthInfo | null>(null);
   const [result, setResult] = useState<NewAnalysisResult | null>(null);
   const [premiumData, setPremiumData] = useState<PremiumData | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // dev 모드: 분석 결과 나오면 자동으로 프리미엄 생성
+  useEffect(() => {
+    if (!isDevMode || !result || premiumData) return;
+
+    const fetchPremium = async () => {
+      try {
+        const res = await fetch("/api/preview-premium", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            devKey: "chunmyeong2026",
+            saju: result.saju,
+            interpretation: result.interpretation,
+            ziweiSummary: result.ziweiSummary,
+            liunianData: result.liunianData,
+            daxianList: result.daxianList,
+          }),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setPremiumData(data.premiumData);
+        }
+      } catch (e) {
+        console.error("Dev premium preview failed:", e);
+      }
+    };
+
+    fetchPremium();
+  }, [isDevMode, result, premiumData]);
 
   const handleBirthInfoNext = useCallback(
     async (info: BirthInfo) => {
