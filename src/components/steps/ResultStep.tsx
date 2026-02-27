@@ -18,7 +18,7 @@ import { parseMarkdown } from "@/lib/parse-markdown";
 import type { NewAnalysisResult, PremiumData, SajuSection } from "@/lib/types";
 
 // 무료로 공개할 섹션 수
-const FREE_SECTION_COUNT = 2;
+const FREE_SECTION_COUNT = 12;
 
 interface ResultStepProps {
   result: NewAnalysisResult;
