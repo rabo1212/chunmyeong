@@ -78,7 +78,7 @@ function SuccessContent() {
             animate={{ rotate: -360 }}
             transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
             className="absolute inset-1"
-            style={{ border: "1px solid transparent", borderTopColor: "#d4c5a0" }}
+            style={{ border: "1px solid transparent", borderTopColor: "#8b7748" }}
           />
           <div className="absolute inset-0 flex items-center justify-center">
             <span className="font-serif text-lg text-cm-accent/50">&#9776;</span>
