@@ -24,7 +24,7 @@ export default function StartScreen({ onStart }: StartScreenProps) {
         <h1 className="font-serif text-5xl font-normal text-cm-text tracking-tight mb-4">
           天命
         </h1>
-        <p className="text-[11px] uppercase tracking-[0.3em] text-cm-muted">
+        <p className="text-[12px] uppercase tracking-[0.3em] text-cm-muted font-medium">
           AI Saju Analysis
         </p>
       </motion.div>
@@ -36,7 +36,7 @@ export default function StartScreen({ onStart }: StartScreenProps) {
         transition={{ delay: 0.4, duration: 0.6 }}
         className="mb-16"
       >
-        <p className="text-cm-muted text-[14px] leading-[1.8]">
+        <p className="text-cm-muted text-[15px] leading-[1.8]">
           당신의 <span className="text-cm-accent">사주팔자</span>를
           <br />
           AI가 깊이 있게 분석해 드립니다
@@ -57,8 +57,8 @@ export default function StartScreen({ onStart }: StartScreenProps) {
         ].map((step, i) => (
           <div key={step.num} className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <span className="text-[11px] tracking-[0.15em] text-cm-dim font-serif">{step.num}</span>
-              <span className="text-[11px] uppercase tracking-[0.15em] text-cm-muted">{step.text}</span>
+              <span className="text-[12px] tracking-[0.15em] text-cm-dim font-serif font-medium">{step.num}</span>
+              <span className="text-[12px] uppercase tracking-[0.15em] text-cm-muted font-medium">{step.text}</span>
             </div>
             {i < 2 && <span className="text-cm-dim/30">—</span>}
           </div>
@@ -81,7 +81,7 @@ export default function StartScreen({ onStart }: StartScreenProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.9 }}
-        className="mt-6 text-[10px] uppercase tracking-[0.15em] text-cm-dim"
+        className="mt-6 text-[11px] uppercase tracking-[0.15em] text-cm-dim font-medium"
       >
         약 1분 소요 &middot; 기본 분석 무료
       </motion.p>

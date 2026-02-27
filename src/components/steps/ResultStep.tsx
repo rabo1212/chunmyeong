@@ -56,7 +56,7 @@ export default function ResultStep({
         <h2 className="font-serif text-3xl font-normal text-cm-text">
           {name ? `${name}님의 천명` : "당신의 천명"}
         </h2>
-        <p className="text-[11px] uppercase tracking-[0.15em] text-cm-muted mt-3">
+        <p className="text-[12px] uppercase tracking-[0.15em] text-cm-muted font-medium mt-3">
           {isPremium
             ? "Saju &middot; Ziwei &middot; Deep Analysis"
             : "Saju &middot; AI Analysis"}
@@ -89,7 +89,7 @@ export default function ResultStep({
           transition={{ delay: 0.5 }}
           className="py-6 border-b border-cm-dim/10"
         >
-          <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted text-center mb-4">
+          <h3 className="text-[13px] font-medium tracking-[0.15em] text-cm-text text-center mb-4">
             대운 흐름
           </h3>
           <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2">
@@ -98,10 +98,10 @@ export default function ResultStep({
                 key={i}
                 className="flex-shrink-0 flex flex-col items-center gap-1 px-3 py-2.5 border border-cm-dim/10 min-w-[56px]"
               >
-                <span className="font-serif text-sm text-cm-text">
+                <span className="font-serif text-base font-medium text-cm-text">
                   {dw.ganzi}
                 </span>
-                <span className="text-[10px] text-cm-dim">{dw.age}세~</span>
+                <span className="text-[11px] text-cm-muted">{dw.age}세~</span>
               </div>
             ))}
           </div>
@@ -121,10 +121,10 @@ export default function ResultStep({
       {hasSections ? (
         <div>
           <div className="text-center py-6 border-t border-cm-dim/10">
-            <h3 className="font-serif text-xl font-normal text-cm-text">
+            <h3 className="font-serif text-xl font-medium text-cm-text">
               사주 해설
             </h3>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-cm-dim mt-2">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-cm-muted font-medium mt-2">
               12 Sections Deep Analysis
             </p>
           </div>
@@ -232,7 +232,7 @@ export default function ResultStep({
         animate={{ y: 0, opacity: 1 }}
         transition={{ delay: isPremium ? 1.5 : 1.3 }}
       >
-        <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-dim text-center mb-4">Share</h3>
+        <h3 className="text-[11px] uppercase tracking-[0.2em] text-cm-muted font-medium text-center mb-4">Share</h3>
         <ShareButtons />
       </motion.div>
 
@@ -244,7 +244,7 @@ export default function ResultStep({
       )}
 
       {/* 면책 */}
-      <p className="text-[10px] uppercase tracking-[0.1em] text-cm-dim/60 text-center leading-relaxed">
+      <p className="text-[11px] tracking-[0.05em] text-cm-dim text-center leading-relaxed">
         본 서비스는 엔터테인먼트 목적이며, 사주학적 해석은 과학적 근거에 기반하지 않습니다.
       </p>
 

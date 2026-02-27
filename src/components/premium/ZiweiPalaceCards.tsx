@@ -13,7 +13,7 @@ export default function ZiweiPalaceCards({ palaces }: Props) {
 
   return (
     <div className="py-6 border-b border-cm-dim/10">
-      <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted text-center mb-5">
+      <h3 className="text-[13px] font-medium tracking-[0.15em] text-cm-text text-center mb-5">
         자미두수 12궁 분석
       </h3>
 
@@ -30,16 +30,16 @@ export default function ZiweiPalaceCards({ palaces }: Props) {
             >
               <span className="text-lg">{palace.palaceEmoji}</span>
               <div className="flex-1 min-w-0">
-                <span className="text-[13px] text-cm-text">
+                <span className="text-[14px] font-medium text-cm-text">
                   {palace.palaceName}
                 </span>
                 {palace.stars.length > 0 && (
-                  <p className="text-[10px] text-cm-dim truncate">
+                  <p className="text-[11px] text-cm-muted truncate">
                     {palace.stars.join(" · ")}
                   </p>
                 )}
               </div>
-              <span className="text-cm-dim text-[10px]">
+              <span className="text-cm-muted text-[11px]">
                 {expanded === i ? "▲" : "▼"}
               </span>
             </button>
@@ -55,7 +55,7 @@ export default function ZiweiPalaceCards({ palaces }: Props) {
                   className="overflow-hidden"
                 >
                   <div className="px-1 pb-4 pt-1">
-                    <p className="text-[13px] leading-[1.9] text-cm-muted">
+                    <p className="text-[14px] leading-[1.9] text-cm-muted">
                       {palace.analysis}
                     </p>
                   </div>

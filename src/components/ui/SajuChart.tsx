@@ -43,14 +43,14 @@ function PillarColumn({
   if (!pillar) {
     return (
       <div className="flex flex-col items-center gap-1">
-        <span className="text-[10px] uppercase tracking-[0.1em] text-cm-dim">{label}</span>
-        <div className="w-14 h-14 border border-cm-dim/10 flex items-center justify-center text-cm-dim/40 text-xs">
+        <span className="text-[11px] font-medium tracking-[0.1em] text-cm-muted">{label}</span>
+        <div className="w-14 h-14 border border-cm-dim/20 flex items-center justify-center text-cm-dim text-xs">
           ?
         </div>
-        <div className="w-14 h-14 border border-cm-dim/10 flex items-center justify-center text-cm-dim/40 text-xs">
+        <div className="w-14 h-14 border border-cm-dim/20 flex items-center justify-center text-cm-dim text-xs">
           ?
         </div>
-        <span className="text-[10px] text-cm-dim/60">시간 미상</span>
+        <span className="text-[10px] text-cm-dim">시간 미상</span>
       </div>
     );
   }
@@ -60,20 +60,20 @@ function PillarColumn({
 
   return (
     <div className="flex flex-col items-center gap-1">
-      <span className="text-[10px] uppercase tracking-[0.1em] text-cm-dim">{label}</span>
-      <span className="text-[10px] text-cm-accent/60">{pillar.stemSipsin || ""}</span>
+      <span className="text-[11px] font-medium tracking-[0.1em] text-cm-muted">{label}</span>
+      <span className="text-[11px] text-cm-accent">{pillar.stemSipsin || ""}</span>
       <div
-        className={`w-14 h-14 border border-cm-dim/15 flex flex-col items-center justify-center ${isDayMaster ? "border-cm-accent/40" : ""}`}
+        className={`w-14 h-14 border border-cm-dim/30 flex flex-col items-center justify-center ${isDayMaster ? "border-cm-accent/60" : ""}`}
       >
-        <span className={`text-2xl font-serif ${getElementTextColor(stemEl)}`}>{pillar.stem}</span>
+        <span className={`text-2xl font-serif font-medium ${getElementTextColor(stemEl)}`}>{pillar.stem}</span>
       </div>
       <div
-        className="w-14 h-14 border border-cm-dim/15 flex flex-col items-center justify-center"
+        className="w-14 h-14 border border-cm-dim/30 flex flex-col items-center justify-center"
       >
         <span className={`text-2xl font-serif ${getElementTextColor(branchEl)}`}>{pillar.branch}</span>
       </div>
-      <span className="text-[10px] text-cm-dim">{pillar.branchSipsin || ""}</span>
-      <span className="text-[9px] text-cm-dim/60">{pillar.unseong || ""}</span>
+      <span className="text-[11px] text-cm-muted">{pillar.branchSipsin || ""}</span>
+      <span className="text-[10px] text-cm-dim">{pillar.unseong || ""}</span>
     </div>
   );
 }
@@ -81,7 +81,7 @@ function PillarColumn({
 export default function SajuChart({ saju }: SajuChartProps) {
   return (
     <div className="py-6 border-b border-cm-dim/10">
-      <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted text-center mb-5">
+      <h3 className="text-[13px] font-medium tracking-[0.15em] text-cm-text text-center mb-5">
         사주팔자
       </h3>
 
@@ -92,7 +92,7 @@ export default function SajuChart({ saju }: SajuChartProps) {
         <PillarColumn label="년주" pillar={saju.pillars.year} />
       </div>
 
-      <p className="text-center text-[11px] text-cm-dim mt-4">
+      <p className="text-center text-[12px] text-cm-muted mt-4">
         일간: <span className="text-cm-accent">{saju.dayMaster}</span> — 나를 대표하는 오행
       </p>
     </div>

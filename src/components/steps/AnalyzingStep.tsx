@@ -54,7 +54,7 @@ export default function AnalyzingStep() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0 }}
-        className="text-cm-muted text-[14px] mb-10"
+        className="text-cm-muted text-[15px] font-medium mb-10"
       >
         {PHASES[phaseIdx]}
       </motion.p>
@@ -72,7 +72,7 @@ export default function AnalyzingStep() {
         />
       </div>
 
-      <p className="text-[10px] uppercase tracking-[0.15em] text-cm-dim mt-10">
+      <p className="text-[11px] uppercase tracking-[0.15em] text-cm-dim font-medium mt-10">
         AI가 사주를 종합 분석하고 있어요
       </p>
     </motion.div>

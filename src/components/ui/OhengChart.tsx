@@ -19,7 +19,7 @@ export default function OhengChart({ oheng }: OhengChartProps) {
 
   return (
     <div className="py-6 border-b border-cm-dim/10">
-      <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted text-center mb-5">
+      <h3 className="text-[13px] font-medium tracking-[0.15em] text-cm-text text-center mb-5">
         오행 분포
       </h3>
 
@@ -29,14 +29,14 @@ export default function OhengChart({ oheng }: OhengChartProps) {
           const pct = Math.round((count / total) * 100);
           return (
             <div key={key} className="flex items-center gap-3">
-              <span className={`text-[12px] font-medium w-14 ${textColor}`}>{label}</span>
-              <div className="flex-1 h-[3px] bg-cm-surface overflow-hidden">
+              <span className={`text-[13px] font-semibold w-14 ${textColor}`}>{label}</span>
+              <div className="flex-1 h-[5px] bg-cm-surface overflow-hidden rounded-sm">
                 <div
                   className={`h-full ${color} transition-all duration-700`}
                   style={{ width: `${pct}%` }}
                 />
               </div>
-              <span className="text-[11px] text-cm-dim w-6 text-right">{count}</span>
+              <span className="text-[12px] font-medium text-cm-muted w-6 text-right">{count}</span>
             </div>
           );
         })}
@@ -47,7 +47,7 @@ export default function OhengChart({ oheng }: OhengChartProps) {
         const missing = ELEMENTS.filter(({ key }) => oheng[key] === 0);
         if (missing.length === 0) return null;
         return (
-          <p className="text-[11px] text-cm-dim mt-4 text-center">
+          <p className="text-[12px] text-cm-muted mt-4 text-center">
             부족한 오행:{" "}
             {missing.map(({ label, textColor }) => (
               <span key={label} className={textColor}>

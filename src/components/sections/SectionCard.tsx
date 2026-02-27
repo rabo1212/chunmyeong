@@ -40,15 +40,15 @@ export default function SectionCard({ section, locked = false, delay = 0 }: Sect
       }`}>
         {/* 넘버 + 라벨 */}
         <div className="flex items-center gap-3 mb-4">
-          <span className="font-serif text-[13px] tracking-[0.15em] text-cm-dim">{num}</span>
-          <span className="text-cm-dim/30">————</span>
-          <span className="text-[10px] uppercase tracking-[0.2em] text-cm-muted">
+          <span className="font-serif text-[13px] font-medium tracking-[0.15em] text-cm-muted">{num}</span>
+          <span className="text-cm-dim">————</span>
+          <span className="text-[11px] uppercase tracking-[0.2em] font-medium text-cm-muted">
             {label}
           </span>
         </div>
 
         {/* 제목 */}
-        <h3 className={`font-serif text-lg font-normal leading-snug mb-4 ${
+        <h3 className={`font-serif text-lg font-medium leading-snug mb-4 ${
           locked ? "text-cm-muted/70" : "text-cm-text"
         }`}>
           {section.title}
@@ -66,11 +66,11 @@ export default function SectionCard({ section, locked = false, delay = 0 }: Sect
             const catchphrase = firstDot > 0 && firstDot < 60 ? section.content.slice(0, firstDot + 1) : null;
             const rest = catchphrase ? section.content.slice(firstDot + 1).trim() : section.content;
             return (
-              <div className="text-[13px] leading-[1.9]">
+              <div className="text-[14px] leading-[1.9]">
                 {catchphrase && (
-                  <p className="text-cm-text font-medium mb-3">{catchphrase}</p>
+                  <p className="text-cm-text font-semibold mb-3">{catchphrase}</p>
                 )}
-                <p className="text-cm-muted">{rest}</p>
+                <p className="text-cm-muted font-normal">{rest}</p>
               </div>
             );
           })()}
@@ -88,10 +88,10 @@ export default function SectionCard({ section, locked = false, delay = 0 }: Sect
         {/* 천명의 조언 */}
         {!locked && section.advice && (
           <div className="mt-5 pl-4 border-l-2 border-cm-accent/30">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-cm-accent/60 mb-1">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-cm-accent font-medium mb-1">
               천명의 조언
             </p>
-            <p className="text-[13px] text-cm-text/90 leading-relaxed">
+            <p className="text-[14px] text-cm-text leading-relaxed">
               {section.advice}
             </p>
           </div>

@@ -9,7 +9,7 @@ interface Props {
 export default function DaeunDetailSection({ detail }: Props) {
   return (
     <div className="py-6 border-b border-cm-dim/10">
-      <h3 className="text-[10px] uppercase tracking-[0.2em] text-cm-muted text-center mb-5">
+      <h3 className="text-[13px] font-medium tracking-[0.15em] text-cm-text text-center mb-5">
         대운 상세 해석
       </h3>
 
@@ -18,15 +18,15 @@ export default function DaeunDetailSection({ detail }: Props) {
         {detail.previous && (
           <div className="py-4 border-b border-cm-dim/8 opacity-60">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] uppercase tracking-[0.1em] text-cm-dim">이전 대운</span>
-              <span className="font-serif text-[13px] text-cm-muted">
+              <span className="text-[11px] uppercase tracking-[0.1em] text-cm-muted font-medium">이전 대운</span>
+              <span className="font-serif text-[14px] text-cm-text">
                 {detail.previous.ganzi}
               </span>
-              <span className="text-[10px] text-cm-dim">
+              <span className="text-[11px] text-cm-muted">
                 ({detail.previous.ageRange})
               </span>
             </div>
-            <p className="text-[12px] leading-relaxed text-cm-dim">
+            <p className="text-[13px] leading-relaxed text-cm-muted">
               {detail.previous.summary}
             </p>
           </div>
@@ -40,14 +40,14 @@ export default function DaeunDetailSection({ detail }: Props) {
                 현재 대운: {detail.current.ganzi}
               </span>
             </div>
-            <span className="text-[10px] text-cm-dim">
+            <span className="text-[11px] text-cm-muted">
               {detail.current.ageRange}
             </span>
           </div>
-          <p className="text-[13px] text-cm-accent/70 mb-3 italic">
+          <p className="text-[14px] text-cm-accent mb-3 italic">
             &ldquo;{detail.current.title}&rdquo;
           </p>
-          <p className="text-[13px] leading-[1.9] text-cm-muted">
+          <p className="text-[14px] leading-[1.9] text-cm-muted">
             {detail.current.analysis}
           </p>
         </div>
@@ -56,15 +56,15 @@ export default function DaeunDetailSection({ detail }: Props) {
         {detail.next && (
           <div className="py-4 border-b border-cm-dim/8 opacity-60">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-[10px] uppercase tracking-[0.1em] text-cm-dim">다음 대운</span>
-              <span className="font-serif text-[13px] text-cm-muted">
+              <span className="text-[11px] uppercase tracking-[0.1em] text-cm-muted font-medium">다음 대운</span>
+              <span className="font-serif text-[14px] text-cm-text">
                 {detail.next.ganzi}
               </span>
-              <span className="text-[10px] text-cm-dim">
+              <span className="text-[11px] text-cm-muted">
                 ({detail.next.ageRange})
               </span>
             </div>
-            <p className="text-[12px] leading-relaxed text-cm-dim">
+            <p className="text-[13px] leading-relaxed text-cm-muted">
               {detail.next.summary}
             </p>
           </div>
@@ -72,8 +72,8 @@ export default function DaeunDetailSection({ detail }: Props) {
 
         {/* 핵심 조언 */}
         <div className="pt-5 pl-4 border-l-2 border-cm-accent/30">
-          <p className="text-[10px] uppercase tracking-[0.15em] text-cm-accent/60 mb-1">이 시기 핵심 조언</p>
-          <p className="text-[13px] leading-relaxed text-cm-text">
+          <p className="text-[11px] uppercase tracking-[0.15em] text-cm-accent font-medium mb-1">이 시기 핵심 조언</p>
+          <p className="text-[14px] leading-relaxed text-cm-text">
             {detail.coreAdvice}
           </p>
         </div>

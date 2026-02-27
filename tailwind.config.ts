@@ -17,8 +17,8 @@ const config: Config = {
           elevated: "#dfd6c6",
           // 텍스트 (다크 브라운)
           text: "#2c2825",
-          muted: "#6b6560",
-          dim: "#9a9490",
+          muted: "#4a4540",
+          dim: "#6b6560",
           // 악센트 (딥 골드)
           accent: "#8b7748",
           "accent-soft": "#a08c5a",
@@ -36,7 +36,7 @@ const config: Config = {
           wood: "#4ade80",
           fire: "#f87171",
           earth: "#fbbf24",
-          metal: "#e2e8f0",
+          metal: "#4b5563",
           water: "#60a5fa",
         },
       },

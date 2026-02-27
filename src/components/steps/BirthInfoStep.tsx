@@ -65,8 +65,8 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
     onNext(info);
   };
 
-  const selectStyle = "w-full bg-transparent border border-cm-dim/20 px-3 py-2.5 text-cm-text focus:outline-none focus:border-cm-accent/50 transition-colors text-[13px]";
-  const inputStyle = "w-full bg-transparent border border-cm-dim/20 px-3 py-2.5 text-cm-text placeholder:text-cm-dim focus:outline-none focus:border-cm-accent/50 transition-colors text-[13px]";
+  const selectStyle = "w-full bg-transparent border border-cm-dim/30 px-3 py-2.5 text-cm-text font-medium focus:outline-none focus:border-cm-accent/50 transition-colors text-[14px]";
+  const inputStyle = "w-full bg-transparent border border-cm-dim/30 px-3 py-2.5 text-cm-text font-medium placeholder:text-cm-dim focus:outline-none focus:border-cm-accent/50 transition-colors text-[14px]";
 
   return (
     <motion.div
@@ -84,7 +84,7 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
 
       {/* 이름 (선택) */}
       <div className="pb-6 border-b border-cm-dim/10">
-        <label className="block text-[10px] uppercase tracking-[0.2em] text-cm-muted mb-3">이름 (선택)</label>
+        <label className="block text-[11px] uppercase tracking-[0.2em] text-cm-muted font-medium mb-3">이름 (선택)</label>
         <input
           type="text"
           value={name}
@@ -96,7 +96,7 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
 
       {/* 양력/음력 선택 */}
       <div className="pb-6 border-b border-cm-dim/10">
-        <label className="block text-[10px] uppercase tracking-[0.2em] text-cm-muted mb-3">달력 종류</label>
+        <label className="block text-[11px] uppercase tracking-[0.2em] text-cm-muted font-medium mb-3">달력 종류</label>
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => { setCalendarType("solar"); setIsLeapMonth(false); }}
@@ -134,7 +134,7 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
 
       {/* 생년월일 */}
       <div className="pb-6 border-b border-cm-dim/10">
-        <label className="block text-[10px] uppercase tracking-[0.2em] text-cm-muted mb-3">생년월일</label>
+        <label className="block text-[11px] uppercase tracking-[0.2em] text-cm-muted font-medium mb-3">생년월일</label>
         <div className="grid grid-cols-3 gap-2">
           <select value={year} onChange={(e) => setYear(Number(e.target.value))} className={selectStyle}>
             {YEARS.map((y) => (<option key={y} value={y}>{y}년</option>))}
@@ -186,7 +186,7 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
 
       {/* 성별 */}
       <div className="pb-6 border-b border-cm-dim/10">
-        <label className="block text-[10px] uppercase tracking-[0.2em] text-cm-muted mb-3">성별</label>
+        <label className="block text-[11px] uppercase tracking-[0.2em] text-cm-muted font-medium mb-3">성별</label>
         <div className="grid grid-cols-2 gap-3">
           <button
             onClick={() => setGender("male")}

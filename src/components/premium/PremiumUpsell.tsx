@@ -55,8 +55,8 @@ export default function PremiumUpsell({ onPaymentReady }: Props) {
       >
         {/* 헤더 */}
         <div className="text-center mb-8">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-cm-accent mb-3">Premium</p>
-          <h3 className="font-serif text-xl text-cm-text font-normal">
+          <p className="text-[11px] uppercase tracking-[0.3em] text-cm-accent font-semibold mb-3">Premium</p>
+          <h3 className="font-serif text-xl text-cm-text font-medium">
             더 깊은 나를 알고 싶다면
           </h3>
         </div>
@@ -68,12 +68,12 @@ export default function PremiumUpsell({ onPaymentReady }: Props) {
               key={item.title}
               className="py-3 border-b border-cm-dim/8 flex items-center gap-3"
             >
-              <span className="text-[11px] tracking-[0.15em] text-cm-dim font-serif">
+              <span className="text-[12px] tracking-[0.15em] text-cm-muted font-serif font-medium">
                 {String(i + 1).padStart(2, "0")}
               </span>
               <div className="flex-1 min-w-0">
-                <span className="text-[13px] text-cm-text">{item.title}</span>
-                <p className="text-[11px] text-cm-dim mt-0.5 blur-[2px]">{item.preview}</p>
+                <span className="text-[14px] font-medium text-cm-text">{item.title}</span>
+                <p className="text-[12px] text-cm-muted mt-0.5 blur-[2px]">{item.preview}</p>
               </div>
             </div>
           ))}
@@ -81,10 +81,10 @@ export default function PremiumUpsell({ onPaymentReady }: Props) {
 
         {/* 가격 */}
         <div className="text-center mb-6">
-          <p className="text-[11px] text-cm-dim mb-2">
+          <p className="text-[12px] text-cm-muted mb-2">
             아메리카노 한 잔보다 저렴하게 확인하는 내 운세
           </p>
-          <p className="font-serif text-2xl text-cm-text">
+          <p className="font-serif text-2xl font-semibold text-cm-text">
             ₩1,900
           </p>
         </div>
@@ -99,7 +99,7 @@ export default function PremiumUpsell({ onPaymentReady }: Props) {
         </button>
 
         {/* 결제 수단 안내 */}
-        <p className="text-[10px] uppercase tracking-[0.1em] text-cm-dim text-center mt-3">
+        <p className="text-[11px] uppercase tracking-[0.1em] text-cm-muted text-center mt-3">
           카카오페이 · 네이버페이 · 신용카드
         </p>
       </motion.div>

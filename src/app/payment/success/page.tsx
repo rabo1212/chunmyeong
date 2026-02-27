@@ -84,8 +84,8 @@ function SuccessContent() {
             <span className="font-serif text-lg text-cm-accent/50">&#9776;</span>
           </div>
         </div>
-        <h2 className="font-serif text-xl text-cm-text font-normal mb-3">프리미엄 분석 생성 중</h2>
-        <p className="text-[12px] text-cm-muted text-center leading-relaxed">
+        <h2 className="font-serif text-xl text-cm-text font-medium mb-3">프리미엄 분석 생성 중</h2>
+        <p className="text-[13px] text-cm-muted text-center leading-relaxed">
           자미두수 명반, 월별 운세, 심층 분석을<br />AI가 생성하고 있습니다
         </p>
         <div className="w-48 h-[1px] bg-cm-dim/15 mt-8 overflow-hidden">
@@ -102,8 +102,8 @@ function SuccessContent() {
   if (status === "error") {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4">
-        <h2 className="font-serif text-xl text-cm-red font-normal mb-3">오류 발생</h2>
-        <p className="text-[12px] text-cm-muted text-center mb-8">{error}</p>
+        <h2 className="font-serif text-xl text-cm-red font-medium mb-3">오류 발생</h2>
+        <p className="text-[13px] text-cm-muted text-center mb-8">{error}</p>
         <a href="/" className="btn-primary px-8">
           처음으로 돌아가기
         </a>
@@ -113,8 +113,8 @@ function SuccessContent() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4">
-      <h2 className="font-serif text-xl text-cm-accent font-normal mb-3">결제 완료</h2>
-      <p className="text-[12px] text-cm-muted">프리미엄 결과 페이지로 이동합니다...</p>
+      <h2 className="font-serif text-xl text-cm-accent font-medium mb-3">결제 완료</h2>
+      <p className="text-[13px] text-cm-muted">프리미엄 결과 페이지로 이동합니다...</p>
     </div>
   );
 }
