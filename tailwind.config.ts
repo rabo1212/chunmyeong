@@ -22,7 +22,7 @@ const config: Config = {
           // 악센트 (딥 골드)
           accent: "#8b7748",
           "accent-soft": "#a08c5a",
-          cream: "#2c2825",
+          cream: "#f5f0e8",
           gold: "#8b7748",
           red: "#c53030",
           // 하위 호환

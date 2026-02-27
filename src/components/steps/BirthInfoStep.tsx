@@ -102,7 +102,7 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
             onClick={() => { setCalendarType("solar"); setIsLeapMonth(false); }}
             className={`py-2.5 text-center text-[12px] uppercase tracking-[0.1em] font-medium transition-all ${
               calendarType === "solar"
-                ? "bg-cm-cream text-black"
+                ? "bg-cm-text text-cm-bg"
                 : "border border-cm-dim/20 text-cm-muted"
             }`}
           >
@@ -112,7 +112,7 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
             onClick={() => setCalendarType("lunar")}
             className={`py-2.5 text-center text-[12px] uppercase tracking-[0.1em] font-medium transition-all ${
               calendarType === "lunar"
-                ? "bg-cm-cream text-black"
+                ? "bg-cm-text text-cm-bg"
                 : "border border-cm-dim/20 text-cm-muted"
             }`}
           >
@@ -192,7 +192,7 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
             onClick={() => setGender("male")}
             className={`py-3 text-center text-[12px] font-medium transition-all ${
               gender === "male"
-                ? "bg-cm-cream text-black"
+                ? "bg-cm-text text-cm-bg"
                 : "border border-cm-dim/20 text-cm-muted"
             }`}
           >
@@ -202,7 +202,7 @@ export default function BirthInfoStep({ onNext, onBack }: BirthInfoStepProps) {
             onClick={() => setGender("female")}
             className={`py-3 text-center text-[12px] font-medium transition-all ${
               gender === "female"
-                ? "bg-cm-cream text-black"
+                ? "bg-cm-text text-cm-bg"
                 : "border border-cm-dim/20 text-cm-muted"
             }`}
           >
