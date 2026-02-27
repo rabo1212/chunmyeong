@@ -235,6 +235,8 @@ export interface CompatibilityResult {
   summary: string;               // 종합 요약 2~3문장
   sections: CompatibilitySection[];  // 5개 영역
   advice: string;                // [천명의 조언] 1줄
+  extraType?: string;            // "compatibility" | "celeb_match" | "family_match"
+  partnerName?: string;          // 상대방 이름
 }
 
 // === 유명인 DB ===

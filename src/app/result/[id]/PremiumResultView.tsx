@@ -97,6 +97,87 @@ export default function PremiumResultView({ result }: { result: PremiumResult })
           </motion.div>
         )}
 
+        {/* 재물운 심화 */}
+        {premium.deepWealth && (
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.0 }}>
+            <div className="py-6 border-b border-cm-dim/10">
+              <h3 className="text-[13px] font-medium tracking-[0.15em] text-cm-text text-center mb-5">
+                재물운 심화 분석
+              </h3>
+              <p className="text-[14px] leading-[1.9] text-cm-muted whitespace-pre-line">
+                {premium.deepWealth}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* 직업·적성 심화 */}
+        {premium.deepCareer && (
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.1 }}>
+            <div className="py-6 border-b border-cm-dim/10">
+              <h3 className="text-[13px] font-medium tracking-[0.15em] text-cm-text text-center mb-5">
+                직업·적성 심화 분석
+              </h3>
+              <p className="text-[14px] leading-[1.9] text-cm-muted whitespace-pre-line">
+                {premium.deepCareer}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* 궁합 분석 */}
+        {premium.compatibility && (
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.2 }}>
+            <div className="py-6 border-b border-cm-dim/10">
+              <div className="text-center mb-6">
+                <h3 className="text-[13px] font-medium tracking-[0.15em] text-cm-text mb-2">
+                  {premium.compatibility.extraType === "family_match" ? "가족 궁합" :
+                   premium.compatibility.extraType === "celeb_match" ? "유명인 궁합" :
+                   "궁합 분석"}
+                  {premium.compatibility.partnerName && (
+                    <span className="text-cm-accent"> — {premium.compatibility.partnerName}</span>
+                  )}
+                </h3>
+                <div className="inline-flex items-center gap-2 mt-2">
+                  <span className="font-serif text-3xl font-semibold text-cm-accent">
+                    {premium.compatibility.totalScore}
+                  </span>
+                  <span className="text-[12px] text-cm-muted">/ 100점</span>
+                </div>
+                <p className="font-serif text-lg text-cm-text mt-2">{premium.compatibility.title}</p>
+                <p className="text-[13px] text-cm-muted mt-2 leading-relaxed">{premium.compatibility.summary}</p>
+              </div>
+
+              {/* 영역별 점수 */}
+              <div className="space-y-3 mb-6">
+                {premium.compatibility.sections.map((sec) => (
+                  <div key={sec.area} className="p-3 border border-cm-dim/10">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[13px] font-medium text-cm-text">{sec.area}</span>
+                      <span className="text-[14px] font-serif font-semibold text-cm-accent">{sec.score}</span>
+                    </div>
+                    <div className="w-full h-1 bg-cm-dim/10 mb-2">
+                      <div
+                        className="h-full bg-cm-accent/60"
+                        style={{ width: `${sec.score}%` }}
+                      />
+                    </div>
+                    <p className="text-[12px] text-cm-muted leading-relaxed">{sec.analysis}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* 조언 */}
+              <div className="p-3 bg-cm-accent/5 border border-cm-accent/15">
+                <p className="text-[11px] uppercase tracking-[0.15em] text-cm-accent font-semibold mb-1">
+                  천명의 조언
+                </p>
+                <p className="text-[13px] text-cm-text leading-relaxed">{premium.compatibility.advice}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* PDF 다운로드 */}
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.0 }}>
           <PdfDownloadButton />

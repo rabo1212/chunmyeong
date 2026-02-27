@@ -166,6 +166,90 @@ ${interpretation.slice(0, 500)}
 따뜻하고 실용적인 톤으로, 마크다운 없이 순수 텍스트로 답변하세요.`;
 }
 
+// 프롬프트 6: 궁합 분석 (연인·친구)
+export function buildCompatibilityPrompt(mySaju: string, partnerSaju: string, partnerName: string): string {
+  return `다음은 두 사람의 사주팔자 데이터입니다.
+
+[나의 사주]
+${mySaju}
+
+[상대방 사주 — ${partnerName}]
+${partnerSaju}
+
+두 사람의 궁합을 분석하여 아래 JSON 형식으로 응답하세요.
+종합 점수(0~100), 5가지 영역별 점수와 분석, 종합 조언:
+
+{
+  "totalScore": 78,
+  "title": "서로를 완성하는 인연",
+  "summary": "종합 궁합 요약 2~3문장...",
+  "sections": [
+    {"area": "성격 궁합", "score": 85, "analysis": "성격 궁합 분석 2~3문장..."},
+    {"area": "연애 궁합", "score": 72, "analysis": "연애 패턴 궁합 2~3문장..."},
+    {"area": "대화 궁합", "score": 80, "analysis": "소통 방식 궁합 2~3문장..."},
+    {"area": "가치관 궁합", "score": 75, "analysis": "가치관 궁합 2~3문장..."},
+    {"area": "미래 궁합", "score": 78, "analysis": "장기적 궁합 전망 2~3문장..."}
+  ],
+  "advice": "이 관계를 위한 핵심 조언 1~2문장..."
+}`;
+}
+
+// 프롬프트 7: 가족 궁합
+export function buildFamilyMatchPrompt(mySaju: string, familySaju: string, familyName: string): string {
+  return `다음은 두 사람의 사주팔자 데이터입니다.
+
+[나의 사주]
+${mySaju}
+
+[가족 사주 — ${familyName}]
+${familySaju}
+
+가족 관계 궁합을 분석하여 아래 JSON 형식으로 응답하세요.
+종합 점수(0~100), 5가지 영역별 점수와 분석, 종합 조언:
+
+{
+  "totalScore": 82,
+  "title": "서로를 지지하는 가족",
+  "summary": "가족 궁합 종합 요약 2~3문장...",
+  "sections": [
+    {"area": "성향 궁합", "score": 85, "analysis": "성격·성향 궁합 2~3문장..."},
+    {"area": "소통 궁합", "score": 78, "analysis": "대화 패턴 궁합 2~3문장..."},
+    {"area": "갈등 패턴", "score": 70, "analysis": "갈등 요소와 해소법 2~3문장..."},
+    {"area": "상호 성장", "score": 88, "analysis": "함께 성장하는 부분 2~3문장..."},
+    {"area": "유대감", "score": 80, "analysis": "정서적 유대 2~3문장..."}
+  ],
+  "advice": "이 가족 관계를 위한 핵심 조언 1~2문장..."
+}`;
+}
+
+// 프롬프트 8: 유명인 궁합
+export function buildCelebMatchPrompt(mySaju: string, celebName: string, celebSaju: string): string {
+  return `다음은 사용자와 유명인의 사주팔자 데이터입니다.
+
+[나의 사주]
+${mySaju}
+
+[유명인 사주 — ${celebName}]
+${celebSaju}
+
+유명인과의 궁합을 재미있고 흥미롭게 분석하여 아래 JSON 형식으로 응답하세요.
+종합 점수(0~100), 5가지 영역별 점수와 분석, 종합 조언:
+
+{
+  "totalScore": 75,
+  "title": "운명적 팬심의 비밀",
+  "summary": "유명인 궁합 종합 요약 2~3문장. 재미있고 흥미로운 톤으로...",
+  "sections": [
+    {"area": "성격 궁합", "score": 82, "analysis": "성격 궁합 2~3문장..."},
+    {"area": "에너지 궁합", "score": 70, "analysis": "오행 에너지 궁합 2~3문장..."},
+    {"area": "감성 궁합", "score": 78, "analysis": "감성적 교류 2~3문장..."},
+    {"area": "운명 궁합", "score": 85, "analysis": "운명적 연결 2~3문장..."},
+    {"area": "팬심 분석", "score": 90, "analysis": "왜 이 스타에게 끌리는지 2~3문장..."}
+  ],
+  "advice": "이 스타와 당신의 인연에 대한 재미있는 조언 1~2문장..."
+}`;
+}
+
 // 대운 요약 텍스트 생성
 export function buildDaeunSummary(
   daeun: Array<{ ganzi: string; age: number; stemSipsin?: string; branchSipsin?: string; unseong?: string }>,
