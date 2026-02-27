@@ -9,7 +9,7 @@ const DEV_KEY = "chunmyeong2026";
 
 export async function POST(request: NextRequest) {
   try {
-    const { devKey, saju, interpretation, ziweiSummary, liunianData, daxianList } =
+    const { devKey, saju, interpretation, ziweiSummary, liunianData, daxianList, selectedExtras } =
       (await request.json()) as {
         devKey: string;
         saju: SajuData;
@@ -17,6 +17,7 @@ export async function POST(request: NextRequest) {
         ziweiSummary: string;
         liunianData: LiunianData;
         daxianList: DaxianItem[];
+        selectedExtras?: string[];
       };
 
     if (devKey !== DEV_KEY) {
@@ -29,6 +30,7 @@ export async function POST(request: NextRequest) {
       ziweiSummary,
       liunianData,
       daxianList,
+      selectedExtras,
     });
 
     return NextResponse.json({ premiumData });

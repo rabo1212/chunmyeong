@@ -5,6 +5,8 @@ import {
   buildMonthlyFortunePrompt,
   buildDaeunDetailPrompt,
   buildDaeunSummary,
+  buildDeepWealthPrompt,
+  buildDeepCareerPrompt,
 } from "./premium-prompts";
 import { buildLiunianSummary } from "./ziwei";
 import type {
@@ -24,6 +26,7 @@ interface PremiumInput {
   ziweiSummary: string;
   liunianData: LiunianData;
   daxianList: DaxianItem[];
+  selectedExtras?: string[];
 }
 
 // JSON 파싱 헬퍼
@@ -84,70 +87,109 @@ export async function generatePremiumContent(input: PremiumInput): Promise<Premi
   const targetYear = new Date().getFullYear();
   const liunianSummary = buildLiunianSummary(input.liunianData);
 
-  const birthYear = input.saju.birthInfo?.year
-    ?? (targetYear - 30);
+  const birthYear = input.saju.birthInfo?.year ?? (targetYear - 30);
   const daeunSummary = buildDaeunSummary(input.saju.daeun, birthYear);
+  const extras = input.selectedExtras || [];
 
-  // 프롬프트 3종 구성
-  const prompt1 = buildZiweiYongshinPrompt(input.ziweiSummary, input.saju.summary);
-  const prompt2 = buildMonthlyFortunePrompt(liunianSummary, input.saju.summary, targetYear);
-  const prompt3 = buildDaeunDetailPrompt(
-    input.saju.summary,
-    input.interpretation,
-    daeunSummary,
-  );
+  // 선택된 메뉴에 따라 필요한 프롬프트만 빌드 + 호출
+  const calls: { key: string; promise: Promise<string> }[] = [];
 
-  // Promise.allSettled — 부분 실패 허용
-  const results = await Promise.allSettled([
-    callGPT(openai, prompt1),
-    callGPT(openai, prompt2),
-    callGPT(openai, prompt3),
-  ]);
+  // 궁합류(compatibility, celeb_match, family_match)는 상대방 입력 후 별도 생성
+  // 여기서는 입력 불필요 메뉴만 생성
 
-  // 결과 파싱 (실패 시 기본값)
+  if (extras.includes("yearly_2026")) {
+    calls.push({
+      key: "monthly",
+      promise: callGPT(openai, buildMonthlyFortunePrompt(liunianSummary, input.saju.summary, targetYear)),
+    });
+  }
+
+  if (extras.includes("deep_wealth")) {
+    calls.push({
+      key: "wealth",
+      promise: callGPT(openai, buildDeepWealthPrompt(input.saju.summary, input.interpretation)),
+    });
+  }
+
+  if (extras.includes("deep_career")) {
+    calls.push({
+      key: "career",
+      promise: callGPT(openai, buildDeepCareerPrompt(input.saju.summary, input.interpretation)),
+    });
+  }
+
+  // 항상 용신은 생성 (기본 제공)
+  calls.push({
+    key: "ziwei_yongshin",
+    promise: callGPT(openai, buildZiweiYongshinPrompt(input.ziweiSummary, input.saju.summary)),
+  });
+
+  // 대운도 기본 제공
+  calls.push({
+    key: "daeun",
+    promise: callGPT(openai, buildDaeunDetailPrompt(input.saju.summary, input.interpretation, daeunSummary)),
+  });
+
+  const results = await Promise.allSettled(calls.map((c) => c.promise));
+
+  // 결과 매핑
+  const resultMap: Record<string, string> = {};
+  calls.forEach((c, i) => {
+    if (results[i].status === "fulfilled") {
+      resultMap[c.key] = (results[i] as PromiseFulfilledResult<string>).value;
+    } else {
+      console.error(`Premium call ${c.key} failed:`, (results[i] as PromiseRejectedResult).reason);
+    }
+  });
+
+  // 파싱
   let ziwei12: ZiweiPalaceAnalysis[] = [];
   let yongshin: YongshinInfo = { element: "미확인", elementEmoji: "", color: "-", direction: "-", number: "-", gemstone: "-", food: "-", career: "-", analysis: "분석 중 오류가 발생했습니다." };
   let monthlyFortune: MonthlyFortune[] = [];
   let daeunDetail: DaeunDetail = {
     current: { ganzi: "-", ageRange: "-", title: "분석 실패", analysis: "프리미엄 분석 중 오류가 발생했습니다." },
-    previous: null,
-    next: null,
-    coreAdvice: "-",
+    previous: null, next: null, coreAdvice: "-",
   };
+  let deepWealth: string | undefined;
+  let deepCareer: string | undefined;
 
-  if (results[0].status === "fulfilled") {
+  if (resultMap.ziwei_yongshin) {
     try {
-      const data1 = parseJSON<{ ziwei12: ZiweiPalaceAnalysis[]; yongshin: YongshinInfo }>(results[0].value);
-      ziwei12 = data1.ziwei12 || [];
-      yongshin = data1.yongshin || yongshin;
-    } catch (e) {
-      console.error("Premium parse error (ziwei):", e);
-    }
-  } else {
-    console.error("Premium call 1 failed:", results[0].reason);
+      const data = parseJSON<{ ziwei12: ZiweiPalaceAnalysis[]; yongshin: YongshinInfo }>(resultMap.ziwei_yongshin);
+      ziwei12 = data.ziwei12 || [];
+      yongshin = data.yongshin || yongshin;
+    } catch (e) { console.error("Parse error (ziwei):", e); }
   }
 
-  if (results[1].status === "fulfilled") {
+  if (resultMap.monthly) {
     try {
-      const data2 = parseJSON<{ monthlyFortune: MonthlyFortune[] }>(results[1].value);
-      monthlyFortune = data2.monthlyFortune || [];
-    } catch (e) {
-      console.error("Premium parse error (monthly):", e);
-    }
-  } else {
-    console.error("Premium call 2 failed:", results[1].reason);
+      const data = parseJSON<{ monthlyFortune: MonthlyFortune[] }>(resultMap.monthly);
+      monthlyFortune = data.monthlyFortune || [];
+    } catch (e) { console.error("Parse error (monthly):", e); }
   }
 
-  if (results[2].status === "fulfilled") {
+  if (resultMap.daeun) {
     try {
-      const data3 = parseJSON<{ daeunDetail: DaeunDetail }>(results[2].value);
-      daeunDetail = data3.daeunDetail || daeunDetail;
-    } catch (e) {
-      console.error("Premium parse error (daeun):", e);
-    }
-  } else {
-    console.error("Premium call 3 failed:", results[2].reason);
+      const data = parseJSON<{ daeunDetail: DaeunDetail }>(resultMap.daeun);
+      daeunDetail = data.daeunDetail || daeunDetail;
+    } catch (e) { console.error("Parse error (daeun):", e); }
   }
 
-  return { ziwei12, monthlyFortune, daeunDetail, yongshin };
+  if (resultMap.wealth) {
+    deepWealth = resultMap.wealth;
+  }
+
+  if (resultMap.career) {
+    deepCareer = resultMap.career;
+  }
+
+  return {
+    ziwei12,
+    monthlyFortune,
+    daeunDetail,
+    yongshin,
+    deepWealth,
+    deepCareer,
+    selectedExtras: extras,
+  } as PremiumData;
 }

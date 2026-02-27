@@ -9,7 +9,7 @@ import BirthInfoStep from "@/components/steps/BirthInfoStep";
 import AnalyzingStep from "@/components/steps/AnalyzingStep";
 import AdStep from "@/components/steps/AdStep";
 import ResultStep from "@/components/steps/ResultStep";
-import type { BirthInfo, PremiumData, NewAnalysisResult } from "@/lib/types";
+import type { BirthInfo, PremiumData, NewAnalysisResult, ExtraOption } from "@/lib/types";
 
 type Step = "start" | "birth" | "analyzing" | "ad" | "result";
 
@@ -55,6 +55,7 @@ function HomeContent() {
             ziweiSummary: result.ziweiSummary,
             liunianData: result.liunianData,
             daxianList: result.daxianList,
+            selectedExtras: ["yearly_2026", "deep_wealth", "deep_career"],
           }),
         });
         if (res.ok) {
@@ -99,7 +100,7 @@ function HomeContent() {
   );
 
   // 프리미엄 결제 준비
-  const handlePaymentReady = useCallback(async (): Promise<{ orderId: string; amount: number } | null> => {
+  const handlePaymentReady = useCallback(async (selectedExtras: ExtraOption[]): Promise<{ orderId: string; amount: number } | null> => {
     if (!result) return null;
 
     try {
@@ -112,6 +113,7 @@ function HomeContent() {
           ziweiSummary: result.ziweiSummary,
           liunianData: result.liunianData,
           daxianList: result.daxianList,
+          selectedExtras,
         }),
       });
 

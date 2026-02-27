@@ -155,6 +155,10 @@ export interface PremiumData {
   monthlyFortune: MonthlyFortune[];
   daeunDetail: DaeunDetail;
   yongshin: YongshinInfo;
+  deepWealth?: string;         // 재물운 심화 (마크다운)
+  deepCareer?: string;         // 직업·적성 심화 (마크다운)
+  compatibility?: CompatibilityResult;  // 궁합 (결제 후 입력)
+  selectedExtras?: string[];   // 선택된 메뉴
 }
 
 export interface PremiumResult {
@@ -196,18 +200,26 @@ export type SectionKey = typeof SECTION_KEYS[number];
 // === 패키지 선택 모델 ===
 
 export type ExtraOption =
-  | "compatibility"       // 궁합분석
-  | "celeb_compatibility" // 유명인 궁합
-  | "yearly_fortune"      // 2026 운세 상세
-  | "monthly_fortune"     // 월별운세
+  | "compatibility"       // 궁합 분석
+  | "yearly_2026"         // 2026 운세 상세
+  | "celeb_match"         // 아이돌·유명인 궁합
+  | "family_match"        // 가족 궁합
   | "deep_wealth"         // 재물운 심화
-  | "deep_career"         // 직업/적성 심화
-  | "ziwei_12"            // 자미두수 12궁
-  | "daeun_detail";       // 대운 상세
+  | "deep_career";        // 직업·적성 심화
 
 export interface PackageSelection {
-  extras: [ExtraOption, ExtraOption]; // 정확히 2개 선택
+  extras: [ExtraOption, ExtraOption, ExtraOption]; // 정확히 3개 선택
 }
+
+// 메뉴 정보
+export const EXTRA_MENU_ITEMS: { id: ExtraOption; emoji: string; label: string; desc: string; needsInput: boolean }[] = [
+  { id: "compatibility", emoji: "💕", label: "궁합 분석", desc: "연인·친구와의 사주 궁합", needsInput: true },
+  { id: "yearly_2026", emoji: "📅", label: "2026 운세 상세", desc: "월별 운세 + 행운의 날", needsInput: false },
+  { id: "celeb_match", emoji: "🎤", label: "아이돌·유명인 궁합", desc: "좋아하는 스타와 궁합 보기", needsInput: true },
+  { id: "family_match", emoji: "👨‍👩‍👧", label: "가족 궁합", desc: "부모·형제·자녀 관계 분석", needsInput: true },
+  { id: "deep_wealth", emoji: "💰", label: "재물운 심화", desc: "투자 적성 + 재물 패턴 + 개운법", needsInput: false },
+  { id: "deep_career", emoji: "💼", label: "직업·적성 심화", desc: "천직 분석 + 업종별 적합도", needsInput: false },
+];
 
 // === 궁합 분석 ===
 

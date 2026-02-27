@@ -6,7 +6,7 @@ import type { SajuData, LiunianData, DaxianItem } from "@/lib/types";
 
 export const maxDuration = 60;
 
-const FIXED_AMOUNT = 1900;
+const FIXED_AMOUNT = 1990;
 
 export async function POST(request: NextRequest) {
   try {
@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
       ziweiSummary: string;
       liunianData: LiunianData;
       daxianList: DaxianItem[];
+      selectedExtras?: string[];
     }>(`pending:${orderId}`);
 
     if (!pendingData) {
@@ -80,13 +81,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 3. 프리미엄 콘텐츠 생성
+    // 3. 프리미엄 콘텐츠 생성 (선택 메뉴 기반)
     const premiumData = await generatePremiumContent({
       saju: pendingData.saju,
       interpretation: pendingData.interpretation,
       ziweiSummary: pendingData.ziweiSummary,
       liunianData: pendingData.liunianData,
       daxianList: pendingData.daxianList,
+      selectedExtras: pendingData.selectedExtras,
     });
 
     // 4. 결과 저장 (30일 TTL)
@@ -98,6 +100,7 @@ export async function POST(request: NextRequest) {
         saju: pendingData.saju,
         interpretation: pendingData.interpretation,
         premium: premiumData,
+        selectedExtras: pendingData.selectedExtras,
         createdAt: new Date().toISOString(),
       },
       { ex: 2592000 } // 30일

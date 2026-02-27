@@ -123,6 +123,49 @@ ${daeunSummary}
 }`;
 }
 
+// 프롬프트 4: 재물운 심화
+export function buildDeepWealthPrompt(sajuSummary: string, interpretation: string): string {
+  return `다음은 한 사람의 사주팔자 데이터와 기본 해석입니다.
+
+[사주 요약]
+${sajuSummary}
+
+[기본 해석 발췌]
+${interpretation.slice(0, 500)}
+
+이 사람의 재물운을 심층 분석해주세요. 아래 항목을 포함해 800자 이내로 작성하세요:
+
+1. **재물 패턴**: 정재형/편재형/식상생재형 등 어떤 재물 유형인지
+2. **투자 적성**: 부동산/주식/사업 중 어디에 적합한지 구체적으로
+3. **돈이 새는 포인트**: 주의해야 할 지출 패턴
+4. **재물 개운법**: 실생활에서 바로 적용 가능한 구체적 조언 3가지
+5. **재물운 피크 시기**: 인생에서 재물운이 가장 강한 시기
+
+따뜻하고 실용적인 톤으로, 마크다운 없이 순수 텍스트로 답변하세요.`;
+}
+
+// 프롬프트 5: 직업·적성 심화
+export function buildDeepCareerPrompt(sajuSummary: string, interpretation: string): string {
+  return `다음은 한 사람의 사주팔자 데이터와 기본 해석입니다.
+
+[사주 요약]
+${sajuSummary}
+
+[기본 해석 발췌]
+${interpretation.slice(0, 500)}
+
+이 사람의 직업·적성을 심층 분석해주세요. 아래 항목을 포함해 800자 이내로 작성하세요:
+
+1. **천직 분석**: 사주에서 드러나는 천직과 그 이유
+2. **업종별 적합도**: 상위 3개 추천 업종과 각각의 이유
+3. **피해야 할 직업군**: 사주와 맞지 않는 분야
+4. **직장 vs 사업**: 조직생활과 독립사업 중 어디에 적합한지
+5. **커리어 전환 최적 시기**: 직업 변화에 좋은 시기와 방향
+6. **직장 내 강점**: 팀에서 빛나는 역할과 능력
+
+따뜻하고 실용적인 톤으로, 마크다운 없이 순수 텍스트로 답변하세요.`;
+}
+
 // 대운 요약 텍스트 생성
 export function buildDaeunSummary(
   daeun: Array<{ ganzi: string; age: number; stemSipsin?: string; branchSipsin?: string; unseong?: string }>,

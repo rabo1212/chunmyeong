@@ -29,7 +29,7 @@ export default function PaymentModal({ onClose }: Props) {
         const widget = tossPayments.widgets({ customerKey: "ANONYMOUS" });
         widgetRef.current = widget;
 
-        await widget.setAmount({ currency: "KRW", value: 1900 });
+        await widget.setAmount({ currency: "KRW", value: 1990 });
 
         if (paymentRef.current) {
           await widget.renderPaymentMethods({

@@ -9,23 +9,22 @@ import ResultCard from "@/components/ResultCard";
 import ShareButtons from "@/components/ShareButtons";
 import CoupangBanner from "@/components/CoupangBanner";
 import PremiumUpsell from "@/components/premium/PremiumUpsell";
-import ZiweiPalaceCards from "@/components/premium/ZiweiPalaceCards";
 import MonthlyTimeline from "@/components/premium/MonthlyTimeline";
 import DaeunDetailSection from "@/components/premium/DaeunDetailSection";
 import YongshinSection from "@/components/premium/YongshinSection";
 import PdfDownloadButton from "@/components/premium/PdfDownloadButton";
 import { parseMarkdown } from "@/lib/parse-markdown";
-import type { NewAnalysisResult, PremiumData, SajuSection } from "@/lib/types";
+import type { NewAnalysisResult, PremiumData, SajuSection, ExtraOption } from "@/lib/types";
 
 // 무료로 공개할 섹션 수
-const FREE_SECTION_COUNT = 12;
+const FREE_SECTION_COUNT = 5;
 
 interface ResultStepProps {
   result: NewAnalysisResult;
   name?: string;
   onRestart: () => void;
   premiumData?: PremiumData | null;
-  onPaymentReady?: () => Promise<{ orderId: string; amount: number } | null>;
+  onPaymentReady?: (selectedExtras: ExtraOption[]) => Promise<{ orderId: string; amount: number } | null>;
 }
 
 export default function ResultStep({
@@ -178,31 +177,56 @@ export default function ResultStep({
           <div className="pt-8">
             <div className="flex items-center gap-4 mb-8">
               <div className="flex-1 h-[1px] bg-cm-accent/15" />
-              <h3 className="text-[10px] uppercase tracking-[0.3em] text-cm-accent">
+              <h3 className="text-[11px] uppercase tracking-[0.3em] text-cm-accent font-semibold">
                 Premium Analysis
               </h3>
               <div className="flex-1 h-[1px] bg-cm-accent/15" />
             </div>
           </div>
 
-          {premiumData.ziwei12 && premiumData.ziwei12.length > 0 && (
-            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.9 }}>
-              <ZiweiPalaceCards palaces={premiumData.ziwei12} />
-            </motion.div>
-          )}
-
+          {/* 2026 운세 상세 */}
           {premiumData.monthlyFortune && premiumData.monthlyFortune.length > 0 && (
-            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.0 }}>
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.9 }}>
               <MonthlyTimeline fortunes={premiumData.monthlyFortune} />
             </motion.div>
           )}
 
+          {/* 재물운 심화 */}
+          {premiumData.deepWealth && (
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.0 }}>
+              <div className="py-6 border-b border-cm-dim/10">
+                <h3 className="text-[13px] font-medium tracking-[0.15em] text-cm-text text-center mb-5">
+                  재물운 심화 분석
+                </h3>
+                <p className="text-[14px] leading-[1.9] text-cm-muted whitespace-pre-line">
+                  {premiumData.deepWealth}
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* 직업·적성 심화 */}
+          {premiumData.deepCareer && (
+            <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.1 }}>
+              <div className="py-6 border-b border-cm-dim/10">
+                <h3 className="text-[13px] font-medium tracking-[0.15em] text-cm-text text-center mb-5">
+                  직업·적성 심화 분석
+                </h3>
+                <p className="text-[14px] leading-[1.9] text-cm-muted whitespace-pre-line">
+                  {premiumData.deepCareer}
+                </p>
+              </div>
+            </motion.div>
+          )}
+
+          {/* 대운 상세 */}
           {premiumData.daeunDetail && (
             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.2 }}>
               <DaeunDetailSection detail={premiumData.daeunDetail} />
             </motion.div>
           )}
 
+          {/* 용신 */}
           {premiumData.yongshin && (
             <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 1.3 }}>
               <YongshinSection yongshin={premiumData.yongshin} />
