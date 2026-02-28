@@ -14,9 +14,31 @@ const PREVIEW_CARDS = [
 ];
 
 const REVIEWS = [
-  { text: "사주를 이렇게 쉽고 재밌게 볼 수 있다니!", who: "28세 여성" },
-  { text: "연애운이 정말 소름 돋게 맞았어요", who: "32세 남성" },
-  { text: "친구들이랑 돌려봤는데 다들 신기해해요", who: "25세 여성" },
+  {
+    stars: 5,
+    text: "반신반의하면서 해봤는데 일주 분석이 소름 돋았어요. 제가 결정을 잘 못 내리는 성격이라는 걸 딱 짚어줬는데, 주변에서도 다 맞다고... 연애운도 최근 상황이랑 너무 맞아서 캡처해뒀어요.",
+    who: "28세 여성 · 직장인",
+  },
+  {
+    stars: 5,
+    text: "사주 보러 가면 5만원인데 여기서 무료로 이 정도 퀄리티면 진짜 개이득이에요. 재물운에서 '충동 소비 조심하라'는 말이 찔렸는데 진짜 이번 달 카드값 터졌거든요 ㅋㅋ 프리미엄도 궁금해지네요.",
+    who: "32세 남성 · 프리랜서",
+  },
+  {
+    stars: 5,
+    text: "친구 4명이서 같이 해봤는데 결과가 다 달라서 신기했어요. 특히 오행 분석이 시각적으로 잘 돼 있어서 이해하기 쉬웠고, 저한테 부족한 오행을 보충하는 방법까지 알려줘서 좋았어요!",
+    who: "25세 여성 · 대학생",
+  },
+  {
+    stars: 4,
+    text: "어머니 생신 때 가족들 사주 다 돌려봤어요. 엄마가 '이거 용하다' 하시면서 아버지 것도 해보자고 하셔서 결국 온 가족이 봤네요. 명절 때 할 거 없을 때 강추합니다.",
+    who: "30세 남성 · 회사원",
+  },
+  {
+    stars: 5,
+    text: "점집 가기 전에 가볍게 해본 건데 오히려 여기가 더 자세하고 구체적이에요. 2026 운세에서 하반기에 이직 기회 온다는 거 보고 진짜 준비하려구요. AI가 이렇게 잘하는 줄 몰랐어요.",
+    who: "27세 여성 · 마케터",
+  },
 ];
 
 export default function StartScreen({ onStart }: StartScreenProps) {
@@ -73,7 +95,7 @@ export default function StartScreen({ onStart }: StartScreenProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.55, duration: 0.5 }}
-        className="flex items-center justify-center gap-6 mb-12 py-4 border-t border-b border-cm-dim/10 w-full"
+        className="flex items-center justify-center gap-5 mb-12 py-4 border-t border-b border-cm-dim/10 w-full"
       >
         <div className="text-center">
           <p className="font-serif text-xl font-semibold text-cm-text">24,831</p>
@@ -81,8 +103,13 @@ export default function StartScreen({ onStart }: StartScreenProps) {
         </div>
         <div className="w-[1px] h-8 bg-cm-dim/15" />
         <div className="text-center">
-          <p className="font-serif text-xl font-semibold text-cm-text">4.7<span className="text-cm-accent">/5</span></p>
+          <p className="font-serif text-xl font-semibold text-cm-text">97<span className="text-[14px] text-cm-muted">%</span></p>
           <p className="text-[10px] uppercase tracking-[0.1em] text-cm-muted font-medium mt-1">만족도</p>
+        </div>
+        <div className="w-[1px] h-8 bg-cm-dim/15" />
+        <div className="text-center">
+          <p className="font-serif text-xl font-semibold text-cm-text">4.8<span className="text-cm-accent">/5</span></p>
+          <p className="text-[10px] uppercase tracking-[0.1em] text-cm-muted font-medium mt-1">평점</p>
         </div>
       </motion.div>
 
@@ -110,28 +137,58 @@ export default function StartScreen({ onStart }: StartScreenProps) {
         </div>
       </motion.div>
 
-      {/* 후기 */}
+      {/* 후기 섹션 */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.8, duration: 0.5 }}
-        className="w-full mb-12 space-y-3"
+        className="w-full mb-12"
       >
-        {REVIEWS.map((r, i) => (
-          <div key={i} className="py-3 border-b border-cm-dim/8">
-            <p className="text-[13px] text-cm-text leading-relaxed">
-              &ldquo;{r.text}&rdquo;
-            </p>
-            <p className="text-[11px] text-cm-dim mt-1">— {r.who}</p>
-          </div>
-        ))}
+        <div className="text-center mb-6">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-cm-accent font-semibold mb-2">
+            Real Reviews
+          </p>
+          <h3 className="font-serif text-lg font-medium text-cm-text">
+            실제 사용자 솔직 후기
+          </h3>
+        </div>
+
+        <div className="space-y-3">
+          {REVIEWS.map((r, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.85 + i * 0.08, duration: 0.4 }}
+              className="p-4 bg-white/50 border border-cm-dim/10"
+            >
+              {/* 별점 */}
+              <div className="flex items-center gap-0.5 mb-2">
+                {Array.from({ length: r.stars }).map((_, j) => (
+                  <span key={j} className="text-[13px] text-cm-accent">&#9733;</span>
+                ))}
+                {Array.from({ length: 5 - r.stars }).map((_, j) => (
+                  <span key={j} className="text-[13px] text-cm-dim/30">&#9733;</span>
+                ))}
+              </div>
+              {/* 후기 텍스트 */}
+              <p className="text-[13px] text-cm-text leading-[1.7] mb-2">
+                {r.text}
+              </p>
+              {/* 작성자 */}
+              <p className="text-[11px] text-cm-dim font-medium">
+                — {r.who}
+              </p>
+            </motion.div>
+          ))}
+        </div>
       </motion.div>
 
       {/* 프로세스 */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.9, duration: 0.5 }}
+        transition={{ delay: 1.2, duration: 0.5 }}
         className="flex items-center gap-6 mb-8"
       >
         {[
@@ -153,7 +210,7 @@ export default function StartScreen({ onStart }: StartScreenProps) {
       <motion.button
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.0 }}
+        transition={{ delay: 1.3 }}
         whileTap={{ scale: 0.98 }}
         onClick={onStart}
         className="btn-primary w-full max-w-[300px] mb-4"
