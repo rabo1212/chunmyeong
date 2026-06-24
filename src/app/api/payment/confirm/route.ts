@@ -124,6 +124,20 @@ export async function POST(request: NextRequest) {
     await kv.del(`pending:${orderId}`);
     await kv.del(lockKey);
 
+    // 7. 텔레그램 결제 알림 (선택적)
+    const telegramToken = process.env.TELEGRAM_BOT_TOKEN;
+    const telegramChatId = process.env.TELEGRAM_CHAT_ID;
+    if (telegramToken && telegramChatId) {
+      fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: telegramChatId,
+          text: `💰 천명 결제 완료!\n주문: ${orderId}\n금액: ₩${FIXED_AMOUNT.toLocaleString()}\n결과ID: ${resultId}`,
+        }),
+      }).catch((err) => console.error("Telegram notify error:", err));
+    }
+
     return NextResponse.json({ resultId, premiumData });
   } catch (error) {
     console.error("Payment confirm error:", error);

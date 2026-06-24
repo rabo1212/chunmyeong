@@ -129,7 +129,7 @@ export default function PaymentModal({ onClose }: Props) {
             onClick={handlePayment}
             className="w-full btn-primary"
           >
-            ₩1,900 결제하기
+            ₩1,990 결제하기
           </button>
         )}
 
